@@ -1,0 +1,6 @@
+﻿services:
+  group06_project.web:
+    image: group06_project.web
+    build:
+      context: .
+      dockerfile: Group06_Project.Web/Dockerfile
