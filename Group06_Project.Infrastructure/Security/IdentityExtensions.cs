@@ -9,7 +9,12 @@ public static class IdentityExtensions
 {
     public static void AddIdentitySetup(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+        services.AddDefaultIdentity<IdentityUser>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.User.RequireUniqueEmail = true;
+            })
+            .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddAuthentication().AddGoogle(googleOptions =>

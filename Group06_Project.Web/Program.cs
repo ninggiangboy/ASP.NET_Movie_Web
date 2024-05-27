@@ -1,3 +1,4 @@
+using Group06_Project.Domain.Interfaces;
 using Group06_Project.Infrastructure.Configurations;
 using Group06_Project.Infrastructure.Data;
 using Group06_Project.Infrastructure.Security;
@@ -16,10 +17,10 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 //  Initialize the database
-// var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
-// using var scope = scopeFactory.CreateScope();
-// var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
-// dbInitializer.Initialize();
+var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+using var scope = scopeFactory.CreateScope();
+var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+dbInitializer.Initialize();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

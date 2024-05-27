@@ -6,6 +6,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Text;
+using Group06_Project.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -106,6 +107,20 @@ public class ExternalLoginModel : PageModel
 
         if (result.IsLockedOut) return RedirectToPage("./Lockout");
 
+        var existUser = await _userManager.FindByEmailAsync(info.Principal.FindFirstValue(ClaimTypes.Email));
+        if (existUser != null)
+        {
+            await _userManager.AddLoginAsync(existUser, info);
+            if (!existUser.EmailConfirmed)
+            {
+                existUser.EmailConfirmed = true;
+                await _userManager.UpdateAsync(existUser);
+            }
+
+            await _signInManager.SignInAsync(existUser, false, info.LoginProvider);
+            return LocalRedirect(returnUrl);
+        }
+
         // If the user does not have an account, then ask the user to create an account.
         ReturnUrl = returnUrl;
         ProviderDisplayName = info.ProviderDisplayName;
@@ -120,6 +135,7 @@ public class ExternalLoginModel : PageModel
             if (resultCreate.Succeeded)
             {
                 var resultAddLogin = await _userManager.AddLoginAsync(user, info);
+                await _userManager.AddToRoleAsync(user, UserRoles.User);
                 if (resultAddLogin.Succeeded)
                 {
                     _logger.LogInformation("User created an account using {Name} provider.", info.LoginProvider);
