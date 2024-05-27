@@ -6,9 +6,9 @@ namespace Group06_Project.Domain.Interfaces.Repositories;
 public interface IRepositoryBase<T, in TId> where T : class
 {
     void Add(T entity);
-    void AddRange(IEnumerable<T> entities);
-    Task AddAsync(T entity, CancellationToken cancellationToken);
-    Task AddRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken);
+    void AddAll(IEnumerable<T> entities);
+    Task AddAsync(T entity);
+    Task AddRangeAsync(IEnumerable<T> entities);
     void Update(T entity);
     void Remove(T entity);
     IQueryable<T> GetAll();
