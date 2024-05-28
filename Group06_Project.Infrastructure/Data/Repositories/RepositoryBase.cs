@@ -40,9 +40,9 @@ public class RepositoryBase<T, TId> : IRepositoryBase<T, TId> where T : class
         DbSet.Remove(entity);
     }
 
-    public IQueryable<T> GetAll()
+    public IEnumerable<T> GetAll()
     {
-        return DbSet;
+        return DbSet.ToList();
     }
 
     public long Count()

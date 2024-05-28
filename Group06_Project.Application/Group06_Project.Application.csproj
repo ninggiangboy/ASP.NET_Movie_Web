@@ -20,6 +20,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Services\"/>
+        <ProjectReference Include="..\Group06_Project.Domain\Group06_Project.Domain.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\Admin\" />
     </ItemGroup>
 </Project>

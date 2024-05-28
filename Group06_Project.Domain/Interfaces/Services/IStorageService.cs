@@ -4,7 +4,8 @@ namespace Group06_Project.Domain.Interfaces.Services;
 
 public interface IStorageService
 {
-    Task<string> UploadFileAsync(IFormFile file);
-    Task<string> GetFileUrlAsync(string fileId);
-    Task DeleteFileAsync(string fileId);
+    Task<string> UploadImage(IFormFile file);
+    Task<string> UploadVideo(IFormFile file);
+    Task<string> GetFileUrl(string fileId);
+    Task DeleteFile(string fileId);
 }

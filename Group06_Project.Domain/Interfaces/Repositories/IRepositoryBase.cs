@@ -11,7 +11,7 @@ public interface IRepositoryBase<T, in TId> where T : class
     Task AddRangeAsync(IEnumerable<T> entities);
     void Update(T entity);
     void Remove(T entity);
-    IQueryable<T> GetAll();
+    IEnumerable<T> GetAll();
     long Count();
     Page<T> GetAll(PageRequest<T> pageRequest);
     IQueryable<T> GetByExpression(Expression<Func<T, bool>> predicate);

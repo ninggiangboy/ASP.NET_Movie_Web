@@ -1,3 +1,5 @@
+using Group06_Project.Application.Services;
+using Group06_Project.Application.Services.Home;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Repositories;
 using Group06_Project.Domain.Interfaces.Services;
@@ -36,5 +38,7 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<IStorageService, CloudinaryService>();
         services.AddScoped<IPaymentService, VnPayService>();
+        services.AddScoped<IGenreService, GenreService>();
+        services.AddScoped<IHomeService, HomeService>();
     }
 }
