@@ -38,5 +38,9 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IStorageService, CloudinaryService>();
         services.AddScoped<IPaymentService, VnPayService>();
         services.AddScoped<IGenreService, GenreService>();
+        services.AddScoped<ICountryService, CountryService>();
+        services.AddScoped<IFilmService, FilmService>();
+        services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IFavoriteService, FavoriteService>();
     }
 }
