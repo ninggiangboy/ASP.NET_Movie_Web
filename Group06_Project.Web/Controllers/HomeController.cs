@@ -7,22 +7,22 @@ namespace Group06_Project.Web.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly IHomeService _homeService;
+    private readonly IGenreService _genreService;
     private readonly ILogger<HomeController> _logger;
 
-    public HomeController(ILogger<HomeController> logger, IHomeService homeService)
+    public HomeController(ILogger<HomeController> logger, IGenreService genreService)
     {
         _logger = logger;
-        _homeService = homeService;
+        _genreService = genreService;
     }
 
     public IActionResult Index()
     {
-        var model = new HomeViewModel
+        var viewModel = new HomeViewModel
         {
-            Genres = _homeService.GetGenresHomeModelList()
+            Genres = _genreService.GetGenresHomeList()
         };
-        return View(model);
+        return View(viewModel);
     }
 
     public IActionResult Privacy()
