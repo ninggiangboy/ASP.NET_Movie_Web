@@ -19,5 +19,4 @@ public class ApplicationDbContext : IdentityDbContext<User>
     public virtual DbSet<Film> Films { get; set; } = null!;
     public virtual DbSet<Rating> Rating { get; set; } = null!;
     public virtual DbSet<Transaction> Transactions { get; set; } = null!;
-    public virtual DbSet<FilmUser> FilmUsers { get; set; } = null!;
 }
