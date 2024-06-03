@@ -9,9 +9,11 @@ namespace Group06_Project.Infrastructure.Data.Repositories;
 public class RepositoryBase<T, TId> : IRepositoryBase<T, TId> where T : class
 {
     protected readonly DbSet<T> DbSet;
+    protected readonly ApplicationDbContext DbContext;
 
     protected RepositoryBase(ApplicationDbContext appDbContext)
     {
+        DbContext = appDbContext;
         DbSet = appDbContext.Set<T>();
     }
 
@@ -33,6 +35,12 @@ public class RepositoryBase<T, TId> : IRepositoryBase<T, TId> where T : class
     public Task AddRangeAsync(IEnumerable<T> entities)
     {
         return DbSet.AddRangeAsync(entities, CancellationToken.None);
+    }
+
+    public Task UpdateAsync(T entity)
+    {
+        DbSet.Update(entity);
+        return Task.CompletedTask;
     }
 
     public void Remove(T entity)

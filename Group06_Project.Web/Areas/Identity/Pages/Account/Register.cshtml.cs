@@ -21,14 +21,14 @@ public class RegisterModel : PageModel
     private readonly IEmailSender _emailSender;
     private readonly IUserEmailStore<IdentityUser> _emailStore;
     private readonly ILogger<RegisterModel> _logger;
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
     private readonly IUserStore<IdentityUser> _userStore;
 
     public RegisterModel(
-        UserManager<IdentityUser> userManager,
+        UserManager<User> userManager,
         IUserStore<IdentityUser> userStore,
-        SignInManager<IdentityUser> signInManager,
+        SignInManager<User> signInManager,
         ILogger<RegisterModel> logger,
         IEmailSender emailSender)
     {

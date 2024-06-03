@@ -12,7 +12,7 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
     public FilmRepository(ApplicationDbContext appDbContext) : base(appDbContext)
     {
     }
-
+    
     public Page<FilmHomeModel> GetFilmList(PageRequest<Film> pageRequest, Expression<Func<Film, bool>> predicate)
     {
         var skip = (pageRequest.PageNumber - 1) * pageRequest.Size;

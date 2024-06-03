@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Group06_Project.Infrastructure.Data;
 
-public class ApplicationDbContext : IdentityDbContext<IdentityUser>
+public class ApplicationDbContext : IdentityDbContext<User>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
@@ -18,4 +18,6 @@ public class ApplicationDbContext : IdentityDbContext<IdentityUser>
     public virtual DbSet<Episode> Episodes { get; set; } = null!;
     public virtual DbSet<Film> Films { get; set; } = null!;
     public virtual DbSet<Rating> Rating { get; set; } = null!;
+    public virtual DbSet<Transaction> Transactions { get; set; } = null!;
+    public virtual DbSet<FilmUser> FilmUsers { get; set; } = null!;
 }

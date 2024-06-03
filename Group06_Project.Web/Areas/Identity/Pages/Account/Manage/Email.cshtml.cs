@@ -17,12 +17,12 @@ namespace Group06_Project.Web.Areas.Identity.Pages.Account.Manage;
 public class EmailModel : PageModel
 {
     private readonly IEmailSender _emailSender;
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
 
     public EmailModel(
-        UserManager<IdentityUser> userManager,
-        SignInManager<IdentityUser> signInManager,
+        UserManager<User> userManager,
+        SignInManager<User> signInManager,
         IEmailSender emailSender)
     {
         _userManager = userManager;

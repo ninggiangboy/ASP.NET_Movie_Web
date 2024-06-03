@@ -5,29 +5,59 @@ using System.Text;
 
 namespace Group06_Project.Infrastructure.Payment;
 
-public class VnPayUtil
+public static class VnPayUtil
 {
-    private readonly SortedList<string, string> _requestData = new(new VnPayCompare());
 
-    public void AddRequestData(string key, string value)
+    public static UrlBuilder BuilderUrl(string baseUrl, string hashSecret)
     {
-        if (!string.IsNullOrEmpty(value)) _requestData.Add(key, value);
+        return new UrlBuilder(baseUrl, hashSecret);
     }
-
-    public string BuildRequestUrl(string baseUrl, string vnpHashSecret)
+    
+    public class UrlBuilder
     {
-        var data = new StringBuilder();
-        foreach (var kv in _requestData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
-            data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");
-        var queryString = data.ToString();
+        private readonly SortedList<string, string> _requestData = new(new VnPayCompare());
+        private readonly string _baseUrl;
+        private readonly string _vnpHashSecret;
 
-        baseUrl += "?" + queryString;
-        var signData = queryString;
-        if (signData.Length > 0) signData = signData.Remove(data.Length - 1, 1);
-        var vnpSecureHash = HmacSha512(vnpHashSecret, signData);
-        baseUrl += "vnp_SecureHash=" + vnpSecureHash;
+        public UrlBuilder(string baseUrl, string hashSecret)
+        {
+            _baseUrl = baseUrl;
+            _vnpHashSecret = hashSecret;
+        }
+        
+        public UrlBuilder RequestData(string key, string value)
+        {
+            if (!string.IsNullOrEmpty(value)) _requestData.Add(key, value);
+            return this;
+        }
 
-        return baseUrl;
+        public string Build()
+        {
+            var data = new StringBuilder();
+            foreach (var kv in _requestData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
+                data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");
+            var queryString = data.ToString();
+
+            var url = _baseUrl + "?" + queryString;
+            var signData = queryString;
+            if (signData.Length > 0) signData = signData.Remove(data.Length - 1, 1);
+            var vnpSecureHash = HmacSha512(_vnpHashSecret, signData);
+            url += "vnp_SecureHash=" + vnpSecureHash;
+            
+            return url;
+        }
+        
+        private class VnPayCompare : IComparer<string>
+        {
+            public int Compare(string? x, string? y)
+            {
+                if (x == y) return 0;
+                if (x == null) return -1;
+                if (y == null) return 1;
+                var vnpCompare = CompareInfo.GetCompareInfo("en-US");
+                return vnpCompare.Compare(x, y, CompareOptions.Ordinal);
+            }
+        }
     }
 
     public static string HmacSha512(string key, string inputData)
@@ -43,17 +73,5 @@ public class VnPayUtil
         }
 
         return hash.ToString();
-    }
-
-    private class VnPayCompare : IComparer<string>
-    {
-        public int Compare(string? x, string? y)
-        {
-            if (x == y) return 0;
-            if (x == null) return -1;
-            if (y == null) return 1;
-            var vnpCompare = CompareInfo.GetCompareInfo("en-US");
-            return vnpCompare.Compare(x, y, CompareOptions.Ordinal);
-        }
     }
 }

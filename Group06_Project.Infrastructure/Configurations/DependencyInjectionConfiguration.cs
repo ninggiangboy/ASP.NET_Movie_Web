@@ -28,6 +28,7 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IFilmRepository, FilmRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<IRatingRepository, RatingRepository>();
+        services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<IDbInitializer, DbInitializer>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
@@ -42,5 +43,6 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IFilmService, FilmService>();
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
+        services.AddScoped<IBalanceService, BalanceService>();
     }
 }

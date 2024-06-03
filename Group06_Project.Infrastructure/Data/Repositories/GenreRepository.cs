@@ -10,9 +10,9 @@ public class GenreRepository : RepositoryBase<Genre, int>, IGenreRepository
     {
     }
 
-    public IEnumerable<GenreHomeModel> GetAllGenresHomeModel()
+    public IEnumerable<GenreOptions> GetAllGenresHomeModel()
     {
-        return DbSet.Select(g => new GenreHomeModel
+        return DbSet.Select(g => new GenreOptions
         {
             Id = g.Id,
             Name = g.Name

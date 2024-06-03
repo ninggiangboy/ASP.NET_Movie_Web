@@ -1,3 +1,4 @@
+using Group06_Project.Domain.Entities;
 using Group06_Project.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +10,7 @@ public static class IdentityExtensions
 {
     public static void AddIdentitySetup(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDefaultIdentity<IdentityUser>(options =>
+        services.AddDefaultIdentity<User>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.User.RequireUniqueEmail = true;

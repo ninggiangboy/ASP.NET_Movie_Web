@@ -4,5 +4,5 @@ namespace Group06_Project.Domain.Interfaces.Services;
 
 public interface IGenreService
 {
-    IEnumerable<GenreHomeModel> GetGenresHomeList();
+    IEnumerable<GenreOptions> GetGenresHomeList();
 }
