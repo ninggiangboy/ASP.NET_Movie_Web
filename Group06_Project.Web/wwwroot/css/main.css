@@ -162,17 +162,18 @@ ul {
 }
 
 body::-webkit-scrollbar {
-    width: 16px;
+    display: none;
+    /*width: 16px;*/
 }
 
-body::-webkit-scrollbar-track {
-    background: #151f30;
-}
+/*body::-webkit-scrollbar-track {*/
+/*    background: #151f30;*/
+/*}*/
 
-body::-webkit-scrollbar-thumb {
-    background-color: #2f80ed;
-    outline: 1px solid #151f30;
-}
+/*body::-webkit-scrollbar-thumb {*/
+/*    background-color: #2f80ed;*/
+/*    outline: 1px solid #151f30;*/
+/*}*/
 
 @media (min-width: 1440px) {
     .container {
@@ -590,6 +591,7 @@ body::-webkit-scrollbar-thumb {
     overflow: hidden;
     display: block;
     margin-right: 15px;
+    cursor: pointer;
 }
 
 .header__user-img-img img {
@@ -1681,7 +1683,7 @@ body::-webkit-scrollbar-thumb {
     left: 0;
     right: 0;
     display: block;
-    z-index: 1;
+    z-index: -99;
     background: linear-gradient(0deg, rgba(21, 31, 48, 0.35) 0%, #131720 100%);
 }
 
@@ -5582,9 +5584,18 @@ body::-webkit-scrollbar-thumb {
     padding: 1rem 1rem;
     margin-bottom: 1rem;
     border-radius: 0.25rem;
+}
+
+.sign__alert-danger {
     color: #842029;
     background-color: #f8d7da;
-    border: 1px solid #f5c2c7;
+    border-color: #f5c2c7;
+}
+
+.sign__alert-success {
+    color: #0f5132;
+    background-color: #d1e7dd;
+    border-color: #badbcc;
 }
 
 .sign__label {
@@ -5758,6 +5769,13 @@ body::-webkit-scrollbar-thumb {
 .sign__btn:hover {
     color: #151f30;
     background-color: #fff;
+}
+
+.sign__text_start {
+    text-align: left;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #e0e0e0;
 }
 
 .sign__text {

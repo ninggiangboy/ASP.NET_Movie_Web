@@ -1,6 +1,15 @@
 ﻿services:
-  group06_project.web:
-    image: group06_project.web
+  group06_project.razorpage:
+    image: group06_project.razorpage
     build:
       context: .
-      dockerfile: Group06_Project.Web/Dockerfile
+      dockerfile: Group06_Project.RazorPage/Dockerfile
+  database:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql
+    restart: no
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Password123
+    ports:
+      - 1433:1433
