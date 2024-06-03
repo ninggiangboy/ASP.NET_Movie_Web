@@ -1,0 +1,23 @@
+@{
+    Layout = "_Layout.cshtml";
+}
+<section class="sign section--full-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="sign__content">
+                    <div class="sign__form">
+                        <a asp-page="/Index" class="sign__logo">
+                            <img src="~/img/logo.svg" alt="">
+                        </a>
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+}
