@@ -9,10 +9,10 @@ public class DbInitializer : IDbInitializer
 {
     private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<User> _userManager;
 
     public DbInitializer(RoleManager<IdentityRole> roleManager,
-        UserManager<IdentityUser> userManager,
+        UserManager<User> userManager,
         IUnitOfWork unitOfWork)
     {
         _roleManager = roleManager;
@@ -26,6 +26,8 @@ public class DbInitializer : IDbInitializer
         await InitializeAdmin();
         await InitializeCountries();
         await InitializeGenres();
+        Console.WriteLine("Initialize done");
+        _unitOfWork.Films.GetList("cc1e33c6-312a-489e-8086-bfb2300891fd");
     }
 
     private async Task InitializeRoles()
@@ -41,11 +43,12 @@ public class DbInitializer : IDbInitializer
     private async Task InitializeAdmin()
     {
         if (await _userManager.FindByNameAsync("admin") != null) return;
-        var admin = new IdentityUser
+        var admin = new User
         {
             UserName = "admin",
             Email = "ninggiangboy@gmail.com",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            Balance = 1_000_000_000
         };
         await _userManager.CreateAsync(admin, "Admin@123");
         await _userManager.AddToRoleAsync(admin, UserRoles.Admin);

@@ -13,7 +13,7 @@ public class GenreService : IGenreService
         _unitOfWork = unitOfWork;
     }
 
-    public IEnumerable<GenreHomeModel> GetGenresHomeList()
+    public IEnumerable<GenreOptions> GetGenresHomeList()
     {
         // return _unitOfWork.Genres.GetAll().Select(g => new GenreHomeModel()
         // {

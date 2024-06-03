@@ -1,11 +1,20 @@
+using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Services;
+using Group06_Project.Domain.Models;
 
 namespace Group06_Project.Application.Services;
 
 public class CountryService : ICountryService
 {
-    public void GetCountriesHomeList()
+    private readonly IUnitOfWork _unitOfWork;
+
+    public CountryService(IUnitOfWork unitOfWork)
     {
-        throw new NotImplementedException();
+        _unitOfWork = unitOfWork;
+    }
+    
+    public IEnumerable<CountryOptions> GetCountryOptionsList()
+    {
+        return _unitOfWork.Countries.GetAllCountryOptions();
     }
 }

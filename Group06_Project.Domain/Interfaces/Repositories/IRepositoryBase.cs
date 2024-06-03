@@ -10,6 +10,7 @@ public interface IRepositoryBase<T, in TId> where T : class
     Task AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entities);
     void Update(T entity);
+    Task UpdateAsync(T entity);
     void Remove(T entity);
     IEnumerable<T> GetAll();
     long Count();

@@ -19,7 +19,7 @@ public class Film
     [StringLength(255)] public string? PosterUrl { get; set; }
     [StringLength(255)] public string? ThumbnailUrl { get; set; }
     public int? Duration { get; set; }
-    public decimal? AverageRating { get; set; }
+    [Precision(18, 2)] public decimal? AverageRating { get; set; }
     public int? TotalEpisode { get; set; }
     public int? DurationPerEpisode { get; set; }
     [StringLength(255)] public string? VideoUrl { get; set; }

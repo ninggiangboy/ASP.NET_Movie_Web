@@ -22,13 +22,13 @@ public class ExternalLoginModel : PageModel
     private readonly IEmailSender _emailSender;
     private readonly IUserEmailStore<IdentityUser> _emailStore;
     private readonly ILogger<ExternalLoginModel> _logger;
-    private readonly SignInManager<IdentityUser> _signInManager;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly SignInManager<User> _signInManager;
+    private readonly UserManager<User> _userManager;
     private readonly IUserStore<IdentityUser> _userStore;
 
     public ExternalLoginModel(
-        SignInManager<IdentityUser> signInManager,
-        UserManager<IdentityUser> userManager,
+        SignInManager<User> signInManager,
+        UserManager<User> userManager,
         IUserStore<IdentityUser> userStore,
         ILogger<ExternalLoginModel> logger,
         IEmailSender emailSender)

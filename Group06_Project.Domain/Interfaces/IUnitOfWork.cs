@@ -10,7 +10,7 @@ public interface IUnitOfWork : IDisposable
     IGenreRepository Genres { get; }
     IFilmRepository Films { get; }
     IRatingRepository Ratings { get; }
-
+    ITransactionRepository Transactions { get; }
     bool Commit();
     Task<bool> CommitAsync(CancellationToken cancellationToken = default);
 }
