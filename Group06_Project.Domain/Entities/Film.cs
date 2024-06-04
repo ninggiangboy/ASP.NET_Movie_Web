@@ -23,12 +23,12 @@ public class Film
     public int? TotalEpisode { get; set; }
     public int? DurationPerEpisode { get; set; }
     [StringLength(255)] public string? VideoUrl { get; set; }
-    public MovieType Type { get; set; } = MovieType.Movie;
+    public FilmType Type { get; set; } = FilmType.Movie;
     public string? Actor { get; set; }
     public string? Director { get; set; }
     public int TotalView { get; set; } = 0;
     public int? ReleaseYear { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public int? CountryId { get; set; }
     public virtual Country? Country { get; set; }
     public virtual ICollection<Episode> Episodes { get; set; } = new HashSet<Episode>();

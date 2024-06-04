@@ -17,7 +17,7 @@ public class Episode
     [StringLength(255)] public string VideoUrl { get; set; } = null!;
     public int View { get; set; } = 0;
     public int? Duration { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public int MovieId { get; set; }
     public virtual Film Movie { get; set; } = null!;
 }

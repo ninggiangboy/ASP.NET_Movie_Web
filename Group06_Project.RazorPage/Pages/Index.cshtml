@@ -49,7 +49,7 @@
                             <option>All genres</option>
                             @foreach (var genre in Model.GenreOptions)
                             {
-                                <option value="@genre.Id">@genre.Name</option>
+                                <option value="@genre.Value">@genre.Label</option>
                             }
                         </select>
 
@@ -65,7 +65,7 @@
                             <option>All countries</option>
                             @foreach (var country in Model.CountryOptions)
                             {
-                                <option value="@country.Id">@country.Name</option>
+                                <option value="@country.Value">@country.Label</option>
                             }
                         </select>
                         <button>Search</button>

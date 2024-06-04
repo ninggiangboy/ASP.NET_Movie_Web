@@ -19,35 +19,35 @@ public class FilmService : IFilmService
         throw new NotImplementedException();
     }
 
-    public Page<FilmHomeModel> GetLatestFilm(int page, int size)
+    public Page<FilmItemList> GetLatestFilm(int page, int size)
     {
         var pageRequest = new PageRequest<Film>
         {
             PageNumber = page,
             Size = size,
-            Sort = "ReleaseYear DESC, CreatedAt DESC",
+            Sort = "ReleaseYear DESC, CreatedAt DESC"
         };
         return _unitOfWork.Films.GetFilmList(pageRequest, null);
     }
 
-    public Page<FilmHomeModel> GetPopularFilm(int page, int size)
+    public Page<FilmItemList> GetPopularFilm(int page, int size)
     {
         var pageRequest = new PageRequest<Film>
         {
             PageNumber = page,
             Size = size,
-            Sort = "TotalView DESC, CreatedAt DESC",
+            Sort = "TotalView DESC, CreatedAt DESC"
         };
         return _unitOfWork.Films.GetFilmList(pageRequest, null);
     }
 
-    public Page<FilmHomeModel> GetFeatureFilm(int page, int size)
+    public Page<FilmItemList> GetFeatureFilm(int page, int size)
     {
         var pageRequest = new PageRequest<Film>
         {
             PageNumber = page,
             Size = size,
-            Sort = "AverageRating DESC, CreatedAt DESC",
+            Sort = "AverageRating DESC, CreatedAt DESC"
         };
         return _unitOfWork.Films.GetFilmList(pageRequest, null);
     }

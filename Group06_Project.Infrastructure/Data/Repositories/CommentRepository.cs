@@ -1,4 +1,3 @@
-using System.Linq.Dynamic.Core;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Interfaces.Repositories;
 
@@ -10,8 +9,9 @@ public class CommentRepository : RepositoryBase<Comment, int>, ICommentRepositor
     {
     }
 
-    public IEnumerable<Comment> GetByFilmId(int filmId)
+    public void RemoveById(int commentId)
     {
-        return DbSet.Where(x => x.FilmId == filmId).ToList();
+        var comment = new Comment { Id = commentId };
+        DbSet.Remove(comment);
     }
 }

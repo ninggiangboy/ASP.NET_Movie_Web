@@ -4,5 +4,5 @@ namespace Group06_Project.Domain.Interfaces.Repositories;
 
 public interface ICommentRepository : IRepositoryBase<Comment, int>
 {
-    IEnumerable<Comment> GetByFilmId(int filmId);
+    void RemoveById(int commentId);
 }

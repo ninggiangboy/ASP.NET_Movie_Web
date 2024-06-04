@@ -26,7 +26,6 @@ public class DbInitializer : IDbInitializer
         await InitializeAdmin();
         await InitializeCountries();
         await InitializeGenres();
-        Console.WriteLine("Initialize done");
     }
 
     private async Task InitializeRoles()

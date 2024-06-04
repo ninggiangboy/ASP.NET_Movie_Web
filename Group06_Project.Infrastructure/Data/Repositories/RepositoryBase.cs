@@ -8,8 +8,8 @@ namespace Group06_Project.Infrastructure.Data.Repositories;
 
 public class RepositoryBase<T, TId> : IRepositoryBase<T, TId> where T : class
 {
-    protected readonly DbSet<T> DbSet;
     protected readonly ApplicationDbContext DbContext;
+    protected readonly DbSet<T> DbSet;
 
     protected RepositoryBase(ApplicationDbContext appDbContext)
     {

@@ -1,45 +1,34 @@
-using System;
-using Group06_Project.Domain.Interfaces.Services;
-using Group06_Project.Domain.Models;
-using Group06_Project.Domain.Interfaces.Repositories;
 using Group06_Project.Domain.Entities;
+using Group06_Project.Domain.Interfaces;
+using Group06_Project.Domain.Interfaces.Services;
 
 namespace Group06_Project.Application.Services;
 
 public class CommentService : ICommentService
 {
-    private readonly ICommentRepository _commentRepository;
-    private readonly IFilmRepository _filmRepository;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public CommentService(ICommentRepository commentRepository, IFilmRepository filmRepository)
+    public CommentService(IUnitOfWork unitOfWork)
     {
-        _commentRepository = commentRepository;
-        _filmRepository = filmRepository;
+        _unitOfWork = unitOfWork;
     }
 
     public void AddCommentToFilm(int filmId, string commentText, string userId)
     {
-        var film = _filmRepository.GetById(filmId);
-        if(film == null) 
-        {
-            throw new Exception("Film not found");
-        }
+        if (!_unitOfWork.Films.ExistsById(filmId)) throw new Exception("Film not found");
         var comment = new Comment
         {
             FilmId = filmId,
             Content = commentText,
-            UserId = userId,
-            Time = DateTime.UtcNow
+            UserId = userId
         };
+        _unitOfWork.Comments.Add(comment);
+        _unitOfWork.Commit();
     }
 
     public void RemoveComment(int commentId)
     {
-        var comment = _commentRepository.GetById(commentId);
-        if(comment == null) 
-        {
-            throw new Exception("Comment not found");
-        }
-        _commentRepository.Remove(comment);
+        _unitOfWork.Comments.RemoveById(commentId);
+        _unitOfWork.Commit();
     }
 }

@@ -10,12 +10,12 @@ public class CountryRepository : RepositoryBase<Country, int>, ICountryRepositor
     {
     }
 
-    public IEnumerable<CountryOptions> GetAllCountryOptions()
+    public IEnumerable<SelectOption> GetAllCountryOptions()
     {
-        return DbSet.Select(c => new CountryOptions
+        return DbSet.Select(c => new SelectOption
         {
-            Id = c.Id,
-            Name = c.Name
+            Value = c.Id,
+            Label = c.Name
         }).ToList();
     }
 }
