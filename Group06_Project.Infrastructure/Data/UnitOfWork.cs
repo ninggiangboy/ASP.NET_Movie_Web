@@ -9,7 +9,7 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
 
     public UnitOfWork(ApplicationDbContext appDbContext, ICountryRepository countryRepository,
         ICommentRepository commentRepository, IEpisodeRepository episodeRepository, IGenreRepository genreRepository,
-        IFilmRepository filmRepository, IRatingRepository ratingRepository,
+        IFilmRepository filmRepository, IRatingRepository ratingRepository, IUserRepository userRepository,
         ITransactionRepository transactionRepository)
     {
         _dbContext = appDbContext;
