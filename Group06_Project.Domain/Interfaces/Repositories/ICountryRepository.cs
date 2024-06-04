@@ -5,5 +5,5 @@ namespace Group06_Project.Domain.Interfaces.Repositories;
 
 public interface ICountryRepository : IRepositoryBase<Country, int>
 {
-    IEnumerable<CountryOptions> GetAllCountryOptions();
+    IEnumerable<SelectOption> GetAllCountryOptions();
 }

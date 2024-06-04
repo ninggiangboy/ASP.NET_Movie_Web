@@ -12,8 +12,8 @@ public class CountryService : ICountryService
     {
         _unitOfWork = unitOfWork;
     }
-    
-    public IEnumerable<CountryOptions> GetCountryOptionsList()
+
+    public IEnumerable<SelectOption> GetCountryOptionsList()
     {
         return _unitOfWork.Countries.GetAllCountryOptions();
     }

@@ -9,7 +9,8 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
 
     public UnitOfWork(ApplicationDbContext appDbContext, ICountryRepository countryRepository,
         ICommentRepository commentRepository, IEpisodeRepository episodeRepository, IGenreRepository genreRepository,
-        IFilmRepository filmRepository, IRatingRepository ratingRepository, ITransactionRepository transactionRepository)
+        IFilmRepository filmRepository, IRatingRepository ratingRepository,
+        ITransactionRepository transactionRepository)
     {
         _dbContext = appDbContext;
         Countries = countryRepository;
@@ -46,7 +47,7 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
         catch
         {
             transaction.Rollback();
-            throw;
+            return false;
         }
     }
 
@@ -62,7 +63,7 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
         catch
         {
             await transaction.RollbackAsync(cancellationToken);
-            throw;
+            return false;
         }
     }
 

@@ -5,5 +5,5 @@ namespace Group06_Project.Domain.Interfaces.Repositories;
 
 public interface IGenreRepository : IRepositoryBase<Genre, int>
 {
-    IEnumerable<GenreOptions> GetAllGenresHomeModel();
+    IEnumerable<SelectOption> GetAllGenresHomeModel();
 }

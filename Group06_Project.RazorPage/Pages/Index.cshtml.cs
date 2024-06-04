@@ -17,8 +17,8 @@ public class IndexModel : PageModel
         _countryService = countryService;
     }
 
-    public IEnumerable<GenreOptions> GenreOptions { get; set; } = Array.Empty<GenreOptions>();
-    public IEnumerable<CountryOptions> CountryOptions { get; set; } = Array.Empty<CountryOptions>();
+    public IEnumerable<SelectOption> GenreOptions { get; set; } = Array.Empty<SelectOption>();
+    public IEnumerable<SelectOption> CountryOptions { get; set; } = Array.Empty<SelectOption>();
     public IEnumerable<string> YearOptions { get; set; } = Array.Empty<string>();
 
     public void OnGet()
