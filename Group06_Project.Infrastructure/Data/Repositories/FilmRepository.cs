@@ -48,17 +48,21 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
         return DbSet.Any(f => f.Id == id);
     }
 
-    public ICollection<FilmHomeModel> GetFavoriteFilms(string userId)
+    public ICollection<FilmItemList> GetFavoriteFilms(string userId)
     {
         return DbContext.Users.Include(u => u.FavoriteFilms).FirstOrDefault(u => u.Id == userId).FavoriteFilms.
-            Select(f => new FilmHomeModel
+            Select(f => new FilmItemList
             {
                 Id = f.Id,
                 Title = f.Title,
                 PosterUrl = f.PosterUrl ?? "",
                 AverageRating = f.AverageRating ?? 0,
                 TotalView = f.TotalView,
-                Genres = f.Genres.Select(g => g.Name).ToList()
+                Genres = f.Genres.Select(g => new SelectOption
+                {
+                    Value = g.Id,
+                    Label = g.Name
+                })
             }).ToList(); ;
     }
 
