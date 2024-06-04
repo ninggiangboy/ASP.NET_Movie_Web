@@ -12,11 +12,11 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
     public FilmRepository(ApplicationDbContext appDbContext) : base(appDbContext)
     {
     }
-    
+
     public Page<FilmHomeModel> GetFilmList(PageRequest<Film> pageRequest, Expression<Func<Film, bool>> predicate)
     {
         var skip = (pageRequest.PageNumber - 1) * pageRequest.Size;
-        var data = DbSet.Include(f=>f.Genres).Select(f => new FilmHomeModel
+        var data = DbSet.Include(f => f.Genres).Select(f => new FilmHomeModel
         {
             Id = f.Id,
             Title = f.Title,
@@ -35,5 +35,19 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
             TotalElement = totalElement,
             Data = totalElement == 0 ? new List<FilmHomeModel>() : data.ToList()
         };
+    }
+
+    public ICollection<FilmHomeModel> GetFavoriteFilms(string userId)
+    {
+        return DbContext.Users.Include(u => u.FavoriteFilms).FirstOrDefault(u => u.Id == userId).FavoriteFilms.
+            Select(f => new FilmHomeModel
+            {
+                Id = f.Id,
+                Title = f.Title,
+                PosterUrl = f.PosterUrl ?? "",
+                AverageRating = f.AverageRating ?? 0,
+                TotalView = f.TotalView,
+                Genres = f.Genres.Select(g => g.Name).ToList()
+            }).ToList(); ;
     }
 }

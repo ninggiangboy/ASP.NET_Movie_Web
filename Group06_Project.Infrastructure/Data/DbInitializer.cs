@@ -27,7 +27,6 @@ public class DbInitializer : IDbInitializer
         await InitializeCountries();
         await InitializeGenres();
         Console.WriteLine("Initialize done");
-        _unitOfWork.Films.GetList("cc1e33c6-312a-489e-8086-bfb2300891fd");
     }
 
     private async Task InitializeRoles()
