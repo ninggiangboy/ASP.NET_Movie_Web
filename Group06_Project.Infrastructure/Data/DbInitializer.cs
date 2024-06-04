@@ -26,9 +26,6 @@ public class DbInitializer : IDbInitializer
         await InitializeAdmin();
         await InitializeCountries();
         await InitializeGenres();
-        Console.WriteLine("Database initialized");
-        _unitOfWork.Comments.RemoveById(1);
-        _unitOfWork.Commit();
     }
 
     private async Task InitializeRoles()

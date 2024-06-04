@@ -29,6 +29,7 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<IRatingRepository, RatingRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IDbInitializer, DbInitializer>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

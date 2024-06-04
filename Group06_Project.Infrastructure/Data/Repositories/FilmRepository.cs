@@ -47,4 +47,28 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
     {
         return DbSet.Any(f => f.Id == id);
     }
+
+    public ICollection<FilmHomeModel> GetFavoriteFilms(string userId)
+    {
+        return DbContext.Users.Include(u => u.FavoriteFilms).FirstOrDefault(u => u.Id == userId).FavoriteFilms.
+            Select(f => new FilmHomeModel
+            {
+                Id = f.Id,
+                Title = f.Title,
+                PosterUrl = f.PosterUrl ?? "",
+                AverageRating = f.AverageRating ?? 0,
+                TotalView = f.TotalView,
+                Genres = f.Genres.Select(g => g.Name).ToList()
+            }).ToList(); ;
+    }
+
+    public void AddFilmToFavoriteList(User user, Film film)
+    {
+        user.FavoriteFilms.Add(film);
+    }
+
+    public void RemoveFilmFromFavoriteList(User user, Film film)
+    {
+        user.FavoriteFilms.Remove(film);
+    } 
 }
