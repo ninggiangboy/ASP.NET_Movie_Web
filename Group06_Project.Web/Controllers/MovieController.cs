@@ -38,5 +38,15 @@ namespace Group06_Project.Web.Controllers
         {
             return View();
         }
-    }
+
+        public IActionResult Catalog()
+        {
+            return View();
+        }
+
+		public IActionResult Category()
+		{
+			return View();
+		}
+	}
 }
