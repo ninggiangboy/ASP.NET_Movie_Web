@@ -50,4 +50,14 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
                 Genres = f.Genres.Select(g => g.Name).ToList()
             }).ToList(); ;
     }
+
+    public void AddFilmToFavoriteList(User user, Film film)
+    {
+        user.FavoriteFilms.Add(film);
+    }
+
+    public void RemoveFilmFromFavoriteList(User user, Film film)
+    {
+        user.FavoriteFilms.Remove(film);
+    }   
 }

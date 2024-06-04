@@ -9,7 +9,7 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
 
     public UnitOfWork(ApplicationDbContext appDbContext, ICountryRepository countryRepository,
         ICommentRepository commentRepository, IEpisodeRepository episodeRepository, IGenreRepository genreRepository,
-        IFilmRepository filmRepository, IRatingRepository ratingRepository, ITransactionRepository transactionRepository)
+        IFilmRepository filmRepository, IRatingRepository ratingRepository, ITransactionRepository transactionRepository, IUserRepository userRepository)
     {
         _dbContext = appDbContext;
         Countries = countryRepository;
@@ -19,6 +19,7 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
         Films = filmRepository;
         Ratings = ratingRepository;
         Transactions = transactionRepository;
+        Users = userRepository;
     }
 
     public async ValueTask DisposeAsync()
@@ -33,6 +34,7 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     public IFilmRepository Films { get; }
     public IRatingRepository Ratings { get; }
     public ITransactionRepository Transactions { get; }
+    public IUserRepository Users { get; }
 
     public bool Commit()
     {
