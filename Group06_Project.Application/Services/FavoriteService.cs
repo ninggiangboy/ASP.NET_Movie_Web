@@ -15,7 +15,7 @@ public class FavoriteService : IFavoriteService
         _unitOfWork = unitOfWork;
     }
 
-    public ICollection<FilmHomeModel> GetFilmFavoriteList(string userId)
+    public ICollection<FilmItemList> GetFilmFavoriteList(string userId)
     {
         var data = _unitOfWork.Films.GetFavoriteFilms(userId);
         return data;
