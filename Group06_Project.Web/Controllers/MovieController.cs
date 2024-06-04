@@ -23,5 +23,20 @@ namespace Group06_Project.Web.Controllers
             _logger.LogInformation(Id.ToString());
             return View();
         }
+
+        public IActionResult Feature()
+        {
+            return View();
+        }
+
+        public IActionResult Popular()
+        {
+            return View();
+        }
+
+        public IActionResult Newest()
+        {
+            return View();
+        }
     }
 }
