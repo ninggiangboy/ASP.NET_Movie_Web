@@ -20,7 +20,7 @@ public class HomeController : Controller
     {
         var viewModel = new HomeViewModel
         {
-            Genres = _genreService.GetGenresHomeList()
+            Genres = _genreService.GetGenresHomeList() 
         };
         return View(viewModel);
     }
