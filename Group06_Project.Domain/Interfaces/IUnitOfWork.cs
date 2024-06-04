@@ -11,6 +11,7 @@ public interface IUnitOfWork : IDisposable
     IFilmRepository Films { get; }
     IRatingRepository Ratings { get; }
     ITransactionRepository Transactions { get; }
+    IUserRepository Users { get; }
     bool Commit();
     Task<bool> CommitAsync(CancellationToken cancellationToken = default);
 }
