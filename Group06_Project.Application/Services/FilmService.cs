@@ -7,6 +7,7 @@ namespace Group06_Project.Application.Services;
 
 public class FilmService : IFilmService
 {
+    private const int HomeFilmListSize = 20;
     private readonly IUnitOfWork _unitOfWork;
 
     public FilmService(IUnitOfWork unitOfWork)
@@ -14,40 +15,33 @@ public class FilmService : IFilmService
         _unitOfWork = unitOfWork;
     }
 
-    public void GetFilmDetail()
+    public Page<FilmItemList> GetLatestFilm()
     {
-        throw new NotImplementedException();
+        return GetHomeFilmList("CreatedAt DESC");
     }
 
-    public Page<FilmItemList> GetLatestFilm(int page, int size)
+    public Page<FilmItemList> GetPopularFilm()
+    {
+        return GetHomeFilmList("TotalView DESC, CreatedAt DESC");
+    }
+
+    public Page<FilmItemList> GetFeatureFilm()
+    {
+        return GetHomeFilmList("AverageRating DESC, CreatedAt DESC");
+    }
+
+    public FilmItemDetail GetFilmDetail(int id)
+    {
+        return _unitOfWork.Films.GetFilmDetail(id);
+    }
+
+    private Page<FilmItemList> GetHomeFilmList(string criteria)
     {
         var pageRequest = new PageRequest<Film>
         {
-            PageNumber = page,
-            Size = size,
-            Sort = "ReleaseYear DESC, CreatedAt DESC"
-        };
-        return _unitOfWork.Films.GetFilmList(pageRequest, null);
-    }
-
-    public Page<FilmItemList> GetPopularFilm(int page, int size)
-    {
-        var pageRequest = new PageRequest<Film>
-        {
-            PageNumber = page,
-            Size = size,
-            Sort = "TotalView DESC, CreatedAt DESC"
-        };
-        return _unitOfWork.Films.GetFilmList(pageRequest, null);
-    }
-
-    public Page<FilmItemList> GetFeatureFilm(int page, int size)
-    {
-        var pageRequest = new PageRequest<Film>
-        {
-            PageNumber = page,
-            Size = size,
-            Sort = "AverageRating DESC, CreatedAt DESC"
+            PageNumber = 1,
+            Size = HomeFilmListSize,
+            Sort = criteria
         };
         return _unitOfWork.Films.GetFilmList(pageRequest, null);
     }

@@ -48,18 +48,24 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
         return DbSet.Any(f => f.Id == id);
     }
 
-    public ICollection<FilmHomeModel> GetFavoriteFilms(string userId)
+    public ICollection<FilmItemList> GetFavoriteFilms(string userId)
     {
-        return DbContext.Users.Include(u => u.FavoriteFilms).FirstOrDefault(u => u.Id == userId).FavoriteFilms.
-            Select(f => new FilmHomeModel
+        return DbContext.Users
+            .Include(u => u.FavoriteFilms)
+            .ThenInclude(f => f.Genres)
+            .FirstOrDefault(u => u.Id == userId)?.FavoriteFilms.Select(f => new FilmItemList
             {
                 Id = f.Id,
                 Title = f.Title,
                 PosterUrl = f.PosterUrl ?? "",
                 AverageRating = f.AverageRating ?? 0,
                 TotalView = f.TotalView,
-                Genres = f.Genres.Select(g => g.Name).ToList()
-            }).ToList(); ;
+                Genres = f.Genres.Select(g => new SelectOption
+                {
+                    Value = g.Id,
+                    Label = g.Name
+                })
+            }).ToList() ?? new List<FilmItemList>();
     }
 
     public void AddFilmToFavoriteList(User user, Film film)
@@ -70,5 +76,42 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
     public void RemoveFilmFromFavoriteList(User user, Film film)
     {
         user.FavoriteFilms.Remove(film);
-    } 
+    }
+
+    public FilmItemDetail? GetFilmDetail(int id)
+    {
+        return DbSet
+            .Include(f => f.Genres)
+            .Include(f => f.Country)
+            // .Include(f => f.Episodes)
+            .Select(f => new FilmItemDetail
+            {
+                Title = f.Title,
+                OtherTitle = f.OtherTitle,
+                Description = f.Description,
+                TrailerUrl = f.TrailerUrl,
+                ThumbnailUrl = f.ThumbnailUrl,
+                Duration = f.Duration,
+                AverageRating = f.AverageRating,
+                TotalEpisode = f.TotalEpisode,
+                DurationPerEpisode = f.DurationPerEpisode,
+                Type = f.Type,
+                Actor = f.Actor,
+                Director = f.Director,
+                TotalView = f.TotalView,
+                ReleaseYear = f.ReleaseYear,
+                Country = f.CountryId != null
+                    ? new SelectOption
+                    {
+                        Value = f.CountryId ?? 0,
+                        Label = f.Country!.Name ?? ""
+                    }
+                    : null,
+                Genres = f.Genres.Select(g => new SelectOption
+                {
+                    Value = g.Id,
+                    Label = g.Name
+                })
+            }).FirstOrDefault(f => f.Id == id);
+    }
 }

@@ -8,7 +8,8 @@ public interface IFilmRepository : IRepositoryBase<Film, int>
 {
     Page<FilmItemList> GetFilmList(PageRequest<Film> pageRequest, Expression<Func<Film, bool>>? predicate);
     bool ExistsById(int id);
-    ICollection<FilmHomeModel> GetFavoriteFilms(string userId);
+    ICollection<FilmItemList> GetFavoriteFilms(string userId);
     void AddFilmToFavoriteList(User user, Film film);
     void RemoveFilmFromFavoriteList(User user, Film film);
+    FilmItemDetail? GetFilmDetail(int id);
 }
