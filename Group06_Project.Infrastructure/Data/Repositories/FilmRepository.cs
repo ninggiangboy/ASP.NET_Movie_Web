@@ -16,8 +16,13 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
     public Page<FilmItemList> GetFilmList(PageRequest<Film> pageRequest, Expression<Func<Film, bool>>? predicate)
     {
         var skip = (pageRequest.PageNumber - 1) * pageRequest.Size;
-        var data = DbSet
+        var rawData = DbSet
             .Include(f => f.Genres)
+            .Where(predicate ?? (_ => true));
+        var totalElement = rawData.Count();
+        var data = rawData
+            .OrderBy(pageRequest.Sort ?? "Id desc")
+            .Skip(skip).Take(pageRequest.Size)
             .Select(f => new FilmItemList
             {
                 Id = f.Id,
@@ -30,10 +35,7 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
                     Value = g.Id,
                     Label = g.Name
                 })
-            }).Where(predicate ?? (_ => true))
-            .Skip(skip).Take(pageRequest.Size).OrderBy(pageRequest.Sort ?? "Id desc");
-
-        var totalElement = data.Count();
+            });
         return new Page<FilmItemList>
         {
             PageNumber = pageRequest.PageNumber,
@@ -78,12 +80,13 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
         user.FavoriteFilms.Remove(film);
     }
 
-    public FilmItemDetail? GetFilmDetail(int id)
+    public Task<FilmItemDetail?> GetFilmDetail(int id)
     {
         return DbSet
             .Include(f => f.Genres)
             .Include(f => f.Country)
-            // .Include(f => f.Episodes)
+            .Include(f => f.Episodes)
+            .Where(f => f.Id == id)
             .Select(f => new FilmItemDetail
             {
                 Title = f.Title,
@@ -94,6 +97,7 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
                 Duration = f.Duration,
                 AverageRating = f.AverageRating,
                 TotalEpisode = f.TotalEpisode,
+                VideoUrl = f.VideoUrl,
                 DurationPerEpisode = f.DurationPerEpisode,
                 Type = f.Type,
                 Actor = f.Actor,
@@ -111,7 +115,16 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
                 {
                     Value = g.Id,
                     Label = g.Name
-                })
-            }).FirstOrDefault(f => f.Id == id);
+                }),
+                Episodes = f.Episodes.OrderBy(e => e.Number).Select(e => new EpisodeItem
+                {
+                    Id = e.Id,
+                    Number = e.Number,
+                    Title = e.Title,
+                    Duration = e.Duration,
+                    ThumbnailUrl = e.ThumbnailUrl,
+                    VideoUrl = e.VideoUrl
+                }).ToList()
+            }).FirstOrDefaultAsync();
     }
 }

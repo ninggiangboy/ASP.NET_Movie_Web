@@ -13,8 +13,7 @@ public class Film
 
     [StringLength(100)] [Unicode] public string Title { get; set; } = null!;
     [StringLength(100)] [Unicode] public string? OtherTitle { get; set; }
-    [StringLength(100)] public string Slug { get; set; } = null!;
-    [Unicode] public string? Description { get; set; }
+    [StringLength(3000)] [Unicode] public string? Description { get; set; }
     [StringLength(255)] public string? TrailerUrl { get; set; }
     [StringLength(255)] public string? PosterUrl { get; set; }
     [StringLength(255)] public string? ThumbnailUrl { get; set; }
@@ -24,8 +23,8 @@ public class Film
     public int? DurationPerEpisode { get; set; }
     [StringLength(255)] public string? VideoUrl { get; set; }
     public FilmType Type { get; set; } = FilmType.Movie;
-    public string? Actor { get; set; }
-    public string? Director { get; set; }
+    [StringLength(255)] public string? Actor { get; set; }
+    [StringLength(255)] public string? Director { get; set; }
     public int TotalView { get; set; } = 0;
     public int? ReleaseYear { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

@@ -1,6 +1,7 @@
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Interfaces.Repositories;
 using Group06_Project.Domain.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Group06_Project.Infrastructure.Data.Repositories;
 
@@ -10,12 +11,23 @@ public class GenreRepository : RepositoryBase<Genre, int>, IGenreRepository
     {
     }
 
-    public IEnumerable<SelectOption> GetAllGenresHomeModel()
+    public IEnumerable<SelectListItem> GetAllGenresHomeModel()
     {
-        return DbSet.Select(g => new SelectOption
+        return DbSet.Select(g => new SelectListItem
         {
-            Value = g.Id,
-            Label = g.Name
+            Value = g.Id.ToString(),
+            Text = g.Name
+        }).ToList();
+    }
+
+    public IEnumerable<HomeItem> GetAllGenreHomeItems()
+    {
+        return DbSet.Select(g => new HomeItem
+        {
+            Id = g.Id,
+            Name = g.Name,
+            Image = g.Image,
+            TotalItem = g.Films.Count
         }).ToList();
     }
 }

@@ -9,24 +9,21 @@ public class PageRequest<T> where T : class
     public string? Sort
     {
         get => _sort;
-        init
-        {
-            value = value?.ToLower();
-            _sort = IsValidSortValue(value) ? value : null;
-        }
+        init => _sort = IsValidSortValue(value) ? value : null;
     }
 
     // Valid sort value: "id", "id desc", "id asc", "id desc, name asc"
     private static bool IsValidSortValue(string? value)
     {
+        value = value?.ToLower();
         if (string.IsNullOrWhiteSpace(value)) return false;
         var properties = typeof(T).GetProperties().Select(p => p.Name.ToLower()).ToList();
-        foreach (var se in value.Split(","))
+        foreach (var se in value.Split(", "))
         {
             var s = se.Split(" ");
             if (s.Length is not (1 or 2)) return false;
             if (!properties.Contains(s[0])) return false;
-            if (s.Length != 1 && (!s[1].Equals("asc") || !s[1].Equals("desc"))) return false;
+            if (s.Length == 1 && !s[1].Equals("asc") && !s[1].Equals("desc")) return false;
         }
 
         return true;

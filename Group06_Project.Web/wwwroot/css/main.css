@@ -2624,15 +2624,15 @@ body::-webkit-scrollbar {
     justify-content: flex-start;
     align-items: center;
     position: absolute;
-    top: 20px;
-    left: 20px;
+    bottom: 20px;
+    right: 20px;
     z-index: 3;
     pointer-events: none;
     height: 24px;
     width: auto;
     padding: 0 10px;
     border-radius: 10px;
-    background-color: #eb5757;
+    background-color: rgba(21, 31, 48, 0.75);
     color: #fff;
     font-size: 12px;
     text-transform: uppercase;
@@ -2702,8 +2702,8 @@ body::-webkit-scrollbar {
     }
 
     .live__status {
-        top: 30px;
-        left: 30px;
+        bottom: 30px;
+        right: 30px;
     }
 
     .live__cover svg {

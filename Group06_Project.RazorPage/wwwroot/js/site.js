@@ -341,25 +341,30 @@ $(document).ready(function () {
         autoHeight: true,
         responsive: {
             0: {
-                items: 1,
+                items: 2,
             },
             576: {
                 items: 2,
             },
             768: {
-                items: 2,
-                margin: 30,
+                items: 3,
+                margin: 20,
             },
             992: {
                 items: 3,
-                margin: 30,
+                margin: 20,
             },
             1200: {
-                items: 3,
-                margin: 30,
+                items: 4,
+                margin: 20,
                 dots: false,
                 mouseDrag: false,
-                slideBy: 3,
+            },
+            1440: {
+                items: 4,
+                margin: 20,
+                dots: false,
+                mouseDrag: false,
             },
         }
     });

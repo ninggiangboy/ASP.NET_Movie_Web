@@ -7,25 +7,32 @@ namespace Group06_Project.RazorPage.Pages;
 public class IndexModel : PageModel
 {
     private readonly ICountryService _countryService;
+    private readonly IFilmService _filmService;
     private readonly IGenreService _genreService;
     private readonly ILogger<IndexModel> _logger;
 
-    public IndexModel(ILogger<IndexModel> logger, IGenreService genreService, ICountryService countryService)
+    public IndexModel(ILogger<IndexModel> logger, IGenreService genreService, ICountryService countryService,
+        IFilmService filmService)
     {
         _logger = logger;
         _genreService = genreService;
         _countryService = countryService;
+        _filmService = filmService;
     }
 
-    public IEnumerable<SelectOption> GenreOptions { get; set; } = Array.Empty<SelectOption>();
-    public IEnumerable<SelectOption> CountryOptions { get; set; } = Array.Empty<SelectOption>();
-    public IEnumerable<string> YearOptions { get; set; } = Array.Empty<string>();
+    public IEnumerable<HomeItem> GenreItems { get; set; } = null!;
+    public IEnumerable<HomeItem> CountryItems { get; set; } = null!;
+    public Page<FilmItemList> LatestFilms { get; set; } = null!;
+    public Page<FilmItemList> PopularFilms { get; set; } = null!;
+    public Page<FilmItemList> FeatureFilms { get; set; } = null!;
 
     public void OnGet()
     {
-        GenreOptions = _genreService.GetGenresHomeList();
-        CountryOptions = _countryService.GetCountryOptionsList();
-        var currentYear = DateTime.Now.Year;
-        YearOptions = Enumerable.Range(currentYear - 3, 3).Select(x => x.ToString());
+        LatestFilms = _filmService.GetLatestFilm();
+        PopularFilms = _filmService.GetPopularFilm();
+        FeatureFilms = _filmService.GetFeatureFilm();
+
+        CountryItems = _countryService.GetCountryHomeItems();
+        GenreItems = _genreService.GetGenreHomeItems();
     }
 }

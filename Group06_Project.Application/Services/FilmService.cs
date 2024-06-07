@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Group06_Project.Domain.Entities;
+using Group06_Project.Domain.Enums;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
@@ -7,7 +9,7 @@ namespace Group06_Project.Application.Services;
 
 public class FilmService : IFilmService
 {
-    private const int HomeFilmListSize = 20;
+    private const int HomeFilmListSize = 18;
     private readonly IUnitOfWork _unitOfWork;
 
     public FilmService(IUnitOfWork unitOfWork)
@@ -30,9 +32,32 @@ public class FilmService : IFilmService
         return GetHomeFilmList("AverageRating DESC, CreatedAt DESC");
     }
 
-    public FilmItemDetail GetFilmDetail(int id)
+    public Page<FilmItemList> GetFilmList(string? search, int? genre, int? country, FilmType? type, string? sort,
+        int? pageNo)
     {
-        return _unitOfWork.Films.GetFilmDetail(id);
+        var pageRequest = new PageRequest<Film>
+        {
+            PageNumber = pageNo ?? 1,
+            Size = HomeFilmListSize,
+            Sort = sort
+        };
+        Expression<Func<Film, bool>> predicate = f =>
+            (
+                string.IsNullOrEmpty(search)
+                || f.Title.Contains(search)
+                || (!string.IsNullOrEmpty(f.OtherTitle) && f.OtherTitle.Contains(search))
+                || (!string.IsNullOrEmpty(f.Actor) && f.Actor.Contains(search))
+                || (!string.IsNullOrEmpty(f.Director) && f.Director.Contains(search))
+            )
+            && (!genre.HasValue || f.Genres.Any(g => g.Id == genre))
+            && (!country.HasValue || f.CountryId == country)
+            && (!type.HasValue || f.Type == type);
+        return _unitOfWork.Films.GetFilmList(pageRequest, predicate);
+    }
+
+    public Task<FilmItemDetail?> GetFilmDetail(int id)
+    {
+        return _unitOfWork.Films.GetFilmDetail(id) ?? throw new Exception("Not found");
     }
 
     private Page<FilmItemList> GetHomeFilmList(string criteria)

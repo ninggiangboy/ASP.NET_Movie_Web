@@ -1,11 +1,13 @@
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Services;
+using Group06_Project.Domain.Models;
 
 namespace Group06_Project.Application.Services;
 
 public class CommentService : ICommentService
 {
+    private const int CommentPageSize = 5;
     private readonly IUnitOfWork _unitOfWork;
 
     public CommentService(IUnitOfWork unitOfWork)
@@ -30,5 +32,16 @@ public class CommentService : ICommentService
     {
         _unitOfWork.Comments.RemoveById(commentId);
         _unitOfWork.Commit();
+    }
+
+    public Page<CommentItem> GetCommentsByFilmId(int filmId, int commentPageNo)
+    {
+        var pageRequest = new PageRequest<Comment>
+        {
+            PageNumber = commentPageNo,
+            Size = CommentPageSize,
+            Sort = "Time Desc"
+        };
+        return _unitOfWork.Comments.GetByFilmId(filmId, pageRequest);
     }
 }

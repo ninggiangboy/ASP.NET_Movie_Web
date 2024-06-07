@@ -10,9 +10,9 @@ public class Episode
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; init; }
 
+    public int Number { get; set; }
+
     [StringLength(100)] [Unicode] public string Title { get; set; } = null!;
-    [StringLength(100)] public string Slug { get; set; } = null!;
-    [Unicode] public string? Description { get; set; }
     [StringLength(255)] public string? ThumbnailUrl { get; set; }
     [StringLength(255)] public string VideoUrl { get; set; } = null!;
     public int View { get; set; } = 0;
