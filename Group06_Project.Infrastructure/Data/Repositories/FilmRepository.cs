@@ -1,5 +1,7 @@
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Interfaces.Repositories;
 using Group06_Project.Domain.Models;
@@ -9,8 +11,11 @@ namespace Group06_Project.Infrastructure.Data.Repositories;
 
 public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
 {
-    public FilmRepository(ApplicationDbContext appDbContext) : base(appDbContext)
+    private readonly IConfigurationProvider _mapper;
+
+    public FilmRepository(ApplicationDbContext appDbContext, IConfigurationProvider mapper) : base(appDbContext)
     {
+        _mapper = mapper;
     }
 
     public Page<FilmItemList> GetFilmList(PageRequest<Film> pageRequest, Expression<Func<Film, bool>>? predicate)
@@ -23,19 +28,7 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
         var data = rawData
             .OrderBy(pageRequest.Sort ?? "Id desc")
             .Skip(skip).Take(pageRequest.Size)
-            .Select(f => new FilmItemList
-            {
-                Id = f.Id,
-                Title = f.Title,
-                PosterUrl = f.PosterUrl ?? "",
-                AverageRating = f.AverageRating ?? 0,
-                TotalView = f.TotalView,
-                Genres = f.Genres.Select(g => new SelectOption
-                {
-                    Value = g.Id,
-                    Label = g.Name
-                })
-            });
+            .ProjectTo<FilmItemList>(_mapper);
         return new Page<FilmItemList>
         {
             PageNumber = pageRequest.PageNumber,
@@ -52,22 +45,29 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
 
     public ICollection<FilmItemList> GetFavoriteFilms(string userId)
     {
-        return DbContext.Users
-            .Include(u => u.FavoriteFilms)
-            .ThenInclude(f => f.Genres)
-            .FirstOrDefault(u => u.Id == userId)?.FavoriteFilms.Select(f => new FilmItemList
-            {
-                Id = f.Id,
-                Title = f.Title,
-                PosterUrl = f.PosterUrl ?? "",
-                AverageRating = f.AverageRating ?? 0,
-                TotalView = f.TotalView,
-                Genres = f.Genres.Select(g => new SelectOption
-                {
-                    Value = g.Id,
-                    Label = g.Name
-                })
-            }).ToList() ?? new List<FilmItemList>();
+        // return DbContext.Users
+        //     .Include(u => u.FavoriteFilms)
+        //     .ThenInclude(f => f.Genres)
+        //     .FirstOrDefault(u => u.Id == userId)?.FavoriteFilms
+        //     .Select(f => new FilmItemList
+        //     {
+        //         Id = f.Id,
+        //         Title = f.Title,
+        //         PosterUrl = f.PosterUrl ?? "",
+        //         AverageRating = f.AverageRating ?? 0,
+        //         TotalView = f.TotalView,
+        //         Genres = f.Genres.Select(g => new SelectOption
+        //         {
+        //             Value = g.Id,
+        //             Label = g.Name
+        //         })
+        //     }).ToList() ?? new List<FilmItemList>();
+        // rewrite
+        return DbSet
+            .Include(f => f.Genres)
+            .Where(f => f.Followers.Any(u => u.Id == userId))
+            .ProjectTo<FilmItemList>(_mapper)
+            .ToList();
     }
 
     public void AddFilmToFavoriteList(User user, Film film)
@@ -87,44 +87,45 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
             .Include(f => f.Country)
             .Include(f => f.Episodes)
             .Where(f => f.Id == id)
-            .Select(f => new FilmItemDetail
-            {
-                Title = f.Title,
-                OtherTitle = f.OtherTitle,
-                Description = f.Description,
-                TrailerUrl = f.TrailerUrl,
-                ThumbnailUrl = f.ThumbnailUrl,
-                Duration = f.Duration,
-                AverageRating = f.AverageRating,
-                TotalEpisode = f.TotalEpisode,
-                VideoUrl = f.VideoUrl,
-                DurationPerEpisode = f.DurationPerEpisode,
-                Type = f.Type,
-                Actor = f.Actor,
-                Director = f.Director,
-                TotalView = f.TotalView,
-                ReleaseYear = f.ReleaseYear,
-                Country = f.CountryId != null
-                    ? new SelectOption
-                    {
-                        Value = f.CountryId ?? 0,
-                        Label = f.Country!.Name ?? ""
-                    }
-                    : null,
-                Genres = f.Genres.Select(g => new SelectOption
-                {
-                    Value = g.Id,
-                    Label = g.Name
-                }),
-                Episodes = f.Episodes.OrderBy(e => e.Number).Select(e => new EpisodeItem
-                {
-                    Id = e.Id,
-                    Number = e.Number,
-                    Title = e.Title,
-                    Duration = e.Duration,
-                    ThumbnailUrl = e.ThumbnailUrl,
-                    VideoUrl = e.VideoUrl
-                }).ToList()
-            }).FirstOrDefaultAsync();
+            .ProjectTo<FilmItemDetail>(_mapper)
+            // .Select(f => new FilmItemDetail
+            // {
+            //     Title = f.Title,
+            //     OtherTitle = f.OtherTitle,
+            //     Description = f.Description,
+            //     TrailerUrl = f.TrailerUrl,
+            //     ThumbnailUrl = f.ThumbnailUrl,
+            //     Duration = f.Duration,
+            //     AverageRating = f.AverageRating,
+            //     TotalEpisode = f.TotalEpisode,
+            //     VideoUrl = f.VideoUrl,
+            //     DurationPerEpisode = f.DurationPerEpisode,
+            //     Type = f.Type,
+            //     Actor = f.Actor,
+            //     Director = f.Director,
+            //     TotalView = f.TotalView,
+            //     ReleaseYear = f.ReleaseYear,
+            //     Country = f.CountryId != null
+            //         ? new SelectOption
+            //         {
+            //             Value = f.CountryId ?? 0,
+            //             Label = f.Country!.Name ?? ""
+            //         }
+            //         : null,
+            //     Genres = f.Genres.Select(g => new SelectOption
+            //     {
+            //         Value = g.Id,
+            //         Label = g.Name
+            //     }),
+            //     Episodes = f.Episodes.OrderBy(e => e.Number).Select(e => new EpisodeItem
+            //     {
+            //         Id = e.Id,
+            //         Number = e.Number,
+            //         Title = e.Title,
+            //         Duration = e.Duration,
+            //         ThumbnailUrl = e.ThumbnailUrl,
+            //         VideoUrl = e.VideoUrl
+            //     }).ToList()})
+            .FirstOrDefaultAsync();
     }
 }

@@ -61,8 +61,8 @@ public class RepositoryBase<T, TId> : IRepositoryBase<T, TId> where T : class
     public Page<T> GetAll(PageRequest<T> pageRequest)
     {
         var skip = (pageRequest.PageNumber - 1) * pageRequest.Size;
-        var data = DbSet.Skip(skip).Take(pageRequest.Size).OrderBy(pageRequest.Sort ?? "Id desc");
-        var totalElement = data.Count();
+        var data = DbSet.OrderBy(pageRequest.Sort ?? "Id desc").Skip(skip).Take(pageRequest.Size);
+        var totalElement = DbSet.Count();
         return new Page<T>
         {
             PageNumber = pageRequest.PageNumber,
@@ -80,8 +80,9 @@ public class RepositoryBase<T, TId> : IRepositoryBase<T, TId> where T : class
     public Page<T> GetByExpression(Expression<Func<T, bool>> predicate, PageRequest<T> pageRequest)
     {
         var skip = (pageRequest.PageNumber - 1) * pageRequest.Size;
-        var data = DbSet.Where(predicate).Skip(skip).Take(pageRequest.Size).OrderBy(pageRequest.Sort ?? "Id desc");
+        var data = DbSet.Where(predicate);
         var totalElement = data.Count();
+        data = data.OrderBy(pageRequest.Sort ?? "Id desc").Skip(skip).Take(pageRequest.Size);
         return new Page<T>
         {
             PageNumber = pageRequest.PageNumber,

@@ -57,7 +57,7 @@ public class FilmService : IFilmService
 
     public Task<FilmItemDetail?> GetFilmDetail(int id)
     {
-        return _unitOfWork.Films.GetFilmDetail(id) ?? throw new Exception("Not found");
+        return _unitOfWork.Films.GetFilmDetail(id);
     }
 
     private Page<FilmItemList> GetHomeFilmList(string criteria)

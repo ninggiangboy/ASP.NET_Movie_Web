@@ -1,9 +1,0 @@
-﻿@model string
-
-@if (!string.IsNullOrEmpty(Model))
-{
-    var statusMessageClass = Model.StartsWith("Error") ? "danger" : "success";
-    <div class="sign__alert sign__alert-@statusMessageClass mt-5 mb-2" role="alert">
-        @Model
-    </div>
-}

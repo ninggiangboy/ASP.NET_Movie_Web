@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Group06_Project.Web", "Group06_Project.Web\Group06_Project.Web.csproj", "{D37A7EF9-B29E-4425-99FA-B2DE96A08562}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65B51825-3556-48B9-98F6-D2ADE5CFFA19}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
@@ -22,10 +20,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D37A7EF9-B29E-4425-99FA-B2DE96A08562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D37A7EF9-B29E-4425-99FA-B2DE96A08562}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D37A7EF9-B29E-4425-99FA-B2DE96A08562}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D37A7EF9-B29E-4425-99FA-B2DE96A08562}.Release|Any CPU.Build.0 = Release|Any CPU
 		{04713D8E-38AB-4283-99E4-2ED14EF4B8DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{04713D8E-38AB-4283-99E4-2ED14EF4B8DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04713D8E-38AB-4283-99E4-2ED14EF4B8DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
