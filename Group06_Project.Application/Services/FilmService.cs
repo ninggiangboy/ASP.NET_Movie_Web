@@ -11,10 +11,12 @@ public class FilmService : IFilmService
 {
     private const int HomeFilmListSize = 18;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IStorageService _storageService;
 
-    public FilmService(IUnitOfWork unitOfWork)
+    public FilmService(IUnitOfWork unitOfWork, IStorageService storageService)
     {
         _unitOfWork = unitOfWork;
+        _storageService = storageService;
     }
 
     public Page<FilmItemList> GetLatestFilm()
@@ -58,6 +60,56 @@ public class FilmService : IFilmService
     public Task<FilmItemDetail?> GetFilmDetail(int id)
     {
         return _unitOfWork.Films.GetFilmDetail(id);
+    }
+
+    public async Task<FilmItemCreate> AddFilm(FilmItemCreate film)
+    {
+        var videoUrl = string.Empty;
+        var trailerUrl = string.Empty;
+        var thumbnailUrl = string.Empty;
+        var posterUrl = string.Empty;
+        if (film.VideoFile != null)
+        {
+           videoUrl = await _storageService.UploadVideo(film.VideoFile);
+        }
+        if (film.TrailerFile != null)
+        {
+            trailerUrl = await _storageService.UploadVideo(film.TrailerFile);
+        }
+        if (film.ThumbnailFile != null)
+        {
+            thumbnailUrl = await _storageService.UploadImage(film.ThumbnailFile);
+        }
+        if (film.PosterFile != null)
+        {
+            posterUrl = await _storageService.UploadImage(film.PosterFile);
+        }
+        var filmGenre = _unitOfWork.Genres.GetGenreByIds(film.Genres.Select(g => g.Id)).ToList();
+        var entity = new Film
+        {
+            Title = film.Title,
+            OtherTitle = film.OtherTitle,
+            Description = film.Description,
+            VideoUrl = videoUrl,
+            TrailerUrl = trailerUrl,
+            ThumbnailUrl = thumbnailUrl,
+            PosterUrl = posterUrl,
+            Duration = film.Duration,
+            AverageRating = film.AverageRating,
+            TotalEpisode = film.TotalEpisode,
+            DurationPerEpisode = film.DurationPerEpisode,
+            Type = film.Type,
+            Actor = film.Actor,
+            Director = film.Director,
+            TotalView = (film.TotalView??0),
+            ReleaseYear = film.ReleaseYear,
+            CountryId = film.CountryId,
+            CreatedAt = DateTime.Now,
+            Genres = filmGenre
+        };
+        var filmCreated = _unitOfWork.Films.Add(entity);
+        await _unitOfWork.CommitAsync();
+        return film;
     }
 
     private Page<FilmItemList> GetHomeFilmList(string criteria)

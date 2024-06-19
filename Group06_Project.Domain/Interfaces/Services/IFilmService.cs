@@ -10,4 +10,5 @@ public interface IFilmService
     Page<FilmItemList> GetFeatureFilm();
     Page<FilmItemList> GetFilmList(string? search, int? genre, int? country, FilmType? type, string? sort, int? pageNo);
     Task<FilmItemDetail?> GetFilmDetail(int id);
+    Task<FilmItemCreate> AddFilm(FilmItemCreate film);
 }

@@ -30,4 +30,9 @@ public class GenreRepository : RepositoryBase<Genre, int>, IGenreRepository
             TotalItem = g.Films.Count
         }).ToList();
     }
+
+    public IEnumerable<Genre> GetGenreByIds(IEnumerable<int> ids)
+    {
+        return DbSet.Where(g => ids.Contains(g.Id)).ToList();
+    }
 }
