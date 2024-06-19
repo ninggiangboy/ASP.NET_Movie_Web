@@ -11,6 +11,7 @@ public class FilmItemDetail
     public string? VideoUrl { get; set; }
     public string? TrailerUrl { get; set; }
     public string? ThumbnailUrl { get; set; }
+    public string? PosterUrl { get; set; }
     public int? Duration { get; set; }
     public decimal? AverageRating { get; set; }
     public int? TotalEpisode { get; set; }

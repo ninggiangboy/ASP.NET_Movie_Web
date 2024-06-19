@@ -1,11 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Group06_Project.Application.Services;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Enums;
-using Group06_Project.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
 
@@ -23,67 +20,47 @@ public class AddItem : PageModel
         _countryService = countryService;
         _genreService = genreService;
     }
-    
-    
-    [BindProperty]
-    [Required] 
-    public string Title { get; set; }
+
+
+    [BindProperty] [Required] public string Title { get; set; }
+
+    [BindProperty] public string OtherTitle { get; set; }
+
+    [BindProperty] [Required] public string Description { get; set; }
+
+    [BindProperty] [Required] public int ReleaseYear { get; set; }
+
+    [BindProperty] [Required] public int Duration { get; set; }
+
+    [BindProperty] public decimal? AverageRating { get; set; }
+
+    [BindProperty] public int? TotalEpisode { get; set; }
+
+    [BindProperty] public int? DurationPerEpisode { get; set; }
+
+    [BindProperty] [Required] public int Type { get; set; }
+
+    [BindProperty] public string Actor { get; set; }
+
+    [BindProperty] public string Director { get; set; }
+
+    [BindProperty] [Required] public int TotalView { get; set; }
+
+    [BindProperty] [Required] public int CountryId { get; set; }
 
     [BindProperty]
-    public string OtherTitle { get; set; }
-
-    [BindProperty]
-    [Required]
-    public string Description { get; set; }
-
-    [BindProperty]
-    [Required]
-    public int ReleaseYear { get; set; }
-
-    [BindProperty]
-    [Required]
-    public int Duration { get; set; }
-
-    [BindProperty]
-    public decimal? AverageRating { get; set; }
-
-    [BindProperty]
-    public int? TotalEpisode { get; set; }
-
-    [BindProperty]
-    public int? DurationPerEpisode { get; set; }
-
-    [BindProperty]
-    [Required]
-    public int Type { get; set; }
-
-    [BindProperty]
-    public string Actor { get; set; }
-
-    [BindProperty]
-    public string Director { get; set; }
-    
-    [BindProperty]
-    [Required]
-    public int TotalView { get; set; }
-    
-    [BindProperty]
-    [Required]
-    public int CountryId { get; set; }
-    
-    [BindProperty] 
     [DataType(DataType.Upload)]
     public IFormFile? PosterFile { get; set; }
-    
+
     [BindProperty]
     [DataType(DataType.Upload)]
     public IFormFile? VideoFile { get; set; }
-    
-    [BindProperty] 
+
+    [BindProperty]
     [DataType(DataType.Upload)]
     public IFormFile? TrailerFile { get; set; }
-    
-    [BindProperty] 
+
+    [BindProperty]
     [DataType(DataType.Upload)]
     public IFormFile? ThumbnailFile { get; set; }
 
@@ -104,43 +81,58 @@ public class AddItem : PageModel
             LoadData();
             return Page();
         }
-        
-        var filmGenres = Request.Form["FilmGenres"].Select(g => new Genre { Id = int.Parse(g) }).ToList();
-        var createFilm = new FilmItemCreate
+
+        try
         {
-            Title = Title,
-            OtherTitle = OtherTitle,
-            Description = Description,
-            ReleaseYear = ReleaseYear,
-            Duration = Duration,
-            AverageRating = AverageRating,
-            TotalEpisode = TotalEpisode,
-            DurationPerEpisode = DurationPerEpisode,
-            Actor = Actor,
-            Director = Director,
-            TotalView = TotalView,
-            CountryId = CountryId,
-            Genres = filmGenres,
-            
-            TrailerFile = TrailerFile,
-            VideoFile = VideoFile,
-            PosterFile = PosterFile,
-            ThumbnailFile = ThumbnailFile,
-            
-            Type = Type switch
+            var filmGenres = Request.Form["FilmGenres"].Select(g => new Genre { Id = int.Parse(g) }).ToList();
+            var createFilm = new FilmItemCreate
             {
-                1 => FilmType.Movie,
-                2 => FilmType.Series,
-                _ => FilmType.Movie
-            },
-        };
-        await _filmService.AddFilm(createFilm);
-        return RedirectToPage("./Catalog/Index");
+                Title = Title,
+                OtherTitle = OtherTitle,
+                Description = Description,
+                ReleaseYear = ReleaseYear,
+                Duration = Duration,
+                AverageRating = AverageRating,
+                TotalEpisode = TotalEpisode,
+                DurationPerEpisode = DurationPerEpisode,
+                Actor = Actor,
+                Director = Director,
+                TotalView = TotalView,
+                CountryId = CountryId,
+                Genres = filmGenres,
+
+                TrailerFile = TrailerFile,
+                VideoFile = VideoFile,
+                PosterFile = PosterFile,
+                ThumbnailFile = ThumbnailFile,
+
+                Type = Type switch
+                {
+                    0 => FilmType.Movie,
+                    1 => FilmType.Series,
+                    _ => FilmType.Movie
+                },
+            };
+            await _filmService.AddFilm(createFilm);
+            return RedirectToPage("./Catalog/Index");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return Page();
+        }
     }
 
     private void LoadData()
     {
-        Genres = _genreService.GetGenreHomeItems();
-        Countries = _countryService.GetCountryHomeItems();
+        try
+        {
+            Genres = _genreService.GetGenreHomeItems();
+            Countries = _countryService.GetCountryHomeItems();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 }

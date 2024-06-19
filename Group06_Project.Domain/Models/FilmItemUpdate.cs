@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace Group06_Project.Domain.Models;
 
-public class FilmItemCreate
+public class FilmItemUpdate
 {
+    public int Id { get; set; }
     public string Title { get; set; } = null!;
     public string? OtherTitle { get; set; }
     public string? Description { get; set; }
