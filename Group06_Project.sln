@@ -1,18 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34616.47
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65B51825-3556-48B9-98F6-D2ADE5CFFA19}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 		script.sql = script.sql
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Group06_Project.Domain", "Group06_Project.Domain\Group06_Project.Domain.csproj", "{04713D8E-38AB-4283-99E4-2ED14EF4B8DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.Domain", "Group06_Project.Domain\Group06_Project.Domain.csproj", "{04713D8E-38AB-4283-99E4-2ED14EF4B8DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Group06_Project.Application", "Group06_Project.Application\Group06_Project.Application.csproj", "{7E36D321-4BA9-49CA-9CE9-D2C762F1CC0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.Application", "Group06_Project.Application\Group06_Project.Application.csproj", "{7E36D321-4BA9-49CA-9CE9-D2C762F1CC0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Group06_Project.Infrastructure", "Group06_Project.Infrastructure\Group06_Project.Infrastructure.csproj", "{7935383A-4068-4ADF-9601-A2BB5E0E00E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.Infrastructure", "Group06_Project.Infrastructure\Group06_Project.Infrastructure.csproj", "{7935383A-4068-4ADF-9601-A2BB5E0E00E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Group06_Project.RazorPage", "Group06_Project.RazorPage\Group06_Project.RazorPage.csproj", "{B985B253-2D40-4F52-80E1-8CAFAEB38A09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.RazorPage", "Group06_Project.RazorPage\Group06_Project.RazorPage.csproj", "{B985B253-2D40-4F52-80E1-8CAFAEB38A09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,5 +39,8 @@ Global
 		{B985B253-2D40-4F52-80E1-8CAFAEB38A09}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B985B253-2D40-4F52-80E1-8CAFAEB38A09}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B985B253-2D40-4F52-80E1-8CAFAEB38A09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
