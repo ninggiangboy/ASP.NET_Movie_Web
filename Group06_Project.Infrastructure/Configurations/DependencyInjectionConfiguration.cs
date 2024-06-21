@@ -45,5 +45,6 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IBalanceService, BalanceService>();
+        services.AddScoped<IUserService, UserService>();
     }
 }
