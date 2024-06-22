@@ -44,4 +44,32 @@ public class CommentService : ICommentService
         };
         return _unitOfWork.Comments.GetByFilmId(filmId, pageRequest);
     }
+
+    public void UpdateComment(int commentId, string newContent)
+    {
+        _unitOfWork.Comments.UpdateComment(commentId, newContent);
+        _unitOfWork.Commit();
+    }
+
+    public Page<CommentList> GetAllComments(int commentPageNo)
+    {
+        var pageRequest = new PageRequest<Comment>
+        {
+            PageNumber = commentPageNo,
+            Size = CommentPageSize,
+            Sort = "Time Desc"
+        };
+        return _unitOfWork.Comments.GetAllComments(pageRequest);
+    }
+	public Page<CommentList> SearchComments(string searchTerm, int commentPageNo)
+	{
+		var pageRequest = new PageRequest<Comment>
+		{
+			PageNumber = commentPageNo,
+			Size = CommentPageSize,
+			Sort = "Time Desc"
+		};
+
+		return _unitOfWork.Comments.SearchComments(searchTerm, pageRequest);
+	}
 }
