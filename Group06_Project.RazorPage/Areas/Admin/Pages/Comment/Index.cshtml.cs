@@ -10,6 +10,8 @@ namespace Group06_Project.RazorPage.Areas.Admin.Pages.Comment
 		private readonly ICommentService _commentService;
 
 		public Page<CommentList> Comments { get; set; }
+		[BindProperty(SupportsGet = true)]
+		public int PageNumber { get; set; } = 1;
 
 		public CommentModel(ICommentService commentService)
 		{
@@ -17,14 +19,15 @@ namespace Group06_Project.RazorPage.Areas.Admin.Pages.Comment
 			Comments = new Page<CommentList>();
 		}
 
-		public void OnGet(int pageNumber = 1)
+		public void OnGet()
 		{
-			Comments = _commentService.GetAllComments(pageNumber);
+			Comments = _commentService.GetAllComments(PageNumber);
+
 		}
 
 		public IActionResult OnPostSearch(string searchTerm)
 		{
-			Comments = _commentService.SearchComments(searchTerm, 1);
+			Comments = _commentService.SearchComments(searchTerm, PageNumber);
 			return Page();
 		}
 
