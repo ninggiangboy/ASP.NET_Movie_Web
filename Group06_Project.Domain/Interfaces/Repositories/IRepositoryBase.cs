@@ -1,11 +1,12 @@
 using System.Linq.Expressions;
 using Group06_Project.Domain.Models;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Group06_Project.Domain.Interfaces.Repositories;
 
 public interface IRepositoryBase<T, in TId> where T : class
 {
-    void Add(T entity);
+    EntityEntry<T> Add(T entity);
     void AddAll(IEnumerable<T> entities);
     Task AddAsync(T entity);
     Task AddRangeAsync(IEnumerable<T> entities);

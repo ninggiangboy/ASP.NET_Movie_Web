@@ -128,4 +128,16 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
             //     }).ToList()})
             .FirstOrDefaultAsync();
     }
+
+    public void DeleteFilm(Film film)
+    {
+        DbSet.Remove(film);
+    }
+
+    public Film? GetFilmByIdWithGenresAndCountry(int id)
+    {
+        return DbSet.Include(f => f.Genres)
+            .Include(f => f.Country)
+            .FirstOrDefault(f => f.Id == id);
+    }
 }
