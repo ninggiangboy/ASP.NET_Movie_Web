@@ -139,5 +139,8 @@
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.js" />
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\dist\jquery.min.map" />
         <_ContentIncludedByDefault Remove="wwwroot\lib\jquery\LICENSE.txt" />
+        <_ContentIncludedByDefault Remove="Pages\Comments\Index.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Admin\Pages\Comments\Index.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Admin\Pages\Comments\_ViewImports.cshtml" />
     </ItemGroup>
 </Project>
