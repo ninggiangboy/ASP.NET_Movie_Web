@@ -1,0 +1,180 @@
+﻿@page
+@model Group06_Project.RazorPage.Areas.Admin.Pages.Catalog.Update
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- main title -->
+        <div class="col-12">
+            <div class="main__title">
+                <h2>Add new item</h2>
+            </div>
+        </div>
+        <!-- end main title -->
+
+        <!-- form -->
+        <div class="col-12">
+            <form method="post" class="form" enctype="multipart/form-data">
+                <input type="hidden" asp-for="@Model.Id" value="@Model.Id"/>
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="row">
+                    <div class="col-12 col-md-5 form__cover">
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-md-12">
+                                <div class="form__img">
+                                    <label for="form__img-upload">Upload cover (190 x 270)</label>
+                                    <input id="form__img-upload" name="PosterFile" asp-for="@Model.PosterFile" type="file" accept=".png, .jpg, .jpeg">
+                                    <img id="form__img" src="@Model.PosterUrl" alt="Poster">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-md-12">
+                                <div class="form__img">
+                                    <label for="form__thumbnail-upload">Upload thumbnail (190 x 270)</label>
+                                    <input id="form__thumbnail-upload" name="ThumbnailFile" asp-for="@Model.ThumbnailFile" type="file" accept=".png, .jpg, .jpeg">
+                                    <img id="form__thumbnail" src="@Model.ThumbnailUrl" alt="Thumbnail">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-7 form__content">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="Title" placeholder="Title" required value="@Model.Title">
+                                    <span asp-validation-for="Title" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="OtherTitle" placeholder="Other Title" value="@Model.OtherTitle">
+                                    <span asp-validation-for="OtherTitle" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form__group">
+                                    <textarea id="text" name="Description" class="form__textarea" placeholder="Description" required>@Model.Description</textarea>
+                                    <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="ReleaseYear" placeholder="Release year" required value="@Model.ReleaseYear">
+                                    <span asp-validation-for="ReleaseYear" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-lg-3">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="Duration" placeholder="Running time in minutes" required value="@Model.Duration">
+                                    <span asp-validation-for="Duration" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="form__group">
+                                    <select class="js-example-basic-multiple" id="country" name="CountryId" required>
+                                        @foreach (var country in Model.Countries)
+                                        {
+                                            <option value="@country.Value" selected="@(Model.CountryId == country.Value)" >@country.Label</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="CountryId" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="form__group">
+                                    <select class="js-example-basic-multiple" id="genre" name="FilmGenres" multiple="multiple" required>
+                                        @foreach (var genre in Model.Genres)
+                                        {
+                                            <option value="@genre.Value" selected="@(Model.FilmGenres.Any(item => item.Value == genre.Value))">@genre.Label</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="DurationPerEpisode" placeholder="Duration per Episode" value="@Model.DurationPerEpisode">
+                                    <span asp-validation-for="DurationPerEpisode" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="Actor" placeholder="Actor" value="@Model.Actor">
+                                    <span asp-validation-for="Actor" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="Director" placeholder="Director" value="@Model.Director">
+                                    <span asp-validation-for="Director" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="form__group">
+                                    <input type="text" class="form__input" name="TotalView" placeholder="Total Views" value="@Model.TotalView">
+                                    <span asp-validation-for="TotalView" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <ul class="form__radio">
+                            <li>
+                                <span>Item type:</span>
+                            </li>
+                            <li>
+                                <input id="type1" type="radio" name="Type" value="1" @(Model.Type.Equals(1) ? "checked" : "")>
+                                <label for="type1">Movie</label>
+                            </li>
+                            <li>
+                                <input id="type2" type="radio" name="Type" value="2" @(Model.Type.Equals(1) ? "checked" : "")>>
+                                <label for="type2">TV Show</label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <div class="form__video">
+                                    <label id="movie1" for="form__video-upload">Upload video</label>
+                                    <input data-name="#movie1" id="form__video-upload" name="VideoFile" asp-for="@Model.VideoFile" class="form__video-upload" type="file" accept="video/mp4,video/x-m4v,video/*">
+                                    <video  width="320" height="240">
+                                        <source src="@Model.VideoUrl" >
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <div class="form__video">
+                                    <label id="trailer" for="form__trailer-upload">Upload trailer</label>
+                                    <input data-name="#trailer" id="form__trailer-upload" name="TrailerFile" asp-for="@Model.TrailerFile" class="form__video-upload" type="file" accept="video/mp4,video/x-m4v,video/*">
+                                    <video  width="320" height="240">
+                                        <source src="@Model.TrailerUrl" >
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <button type="submit" class="form__btn">Publish</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- end form -->
+    </div>
+</div>

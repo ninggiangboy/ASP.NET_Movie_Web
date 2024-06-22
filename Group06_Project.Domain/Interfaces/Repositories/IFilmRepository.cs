@@ -12,4 +12,6 @@ public interface IFilmRepository : IRepositoryBase<Film, int>
     void AddFilmToFavoriteList(User user, Film film);
     void RemoveFilmFromFavoriteList(User user, Film film);
     Task<FilmItemDetail?> GetFilmDetail(int id);
+    void DeleteFilm(Film film);
+    Film GetFilmByIdWithGenresAndCountry(int id);
 }
