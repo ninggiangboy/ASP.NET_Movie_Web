@@ -12,6 +12,8 @@ namespace Group06_Project.RazorPage.Areas.Admin.Pages.Comment
 		public Page<CommentList> Comments { get; set; }
 		[BindProperty(SupportsGet = true)]
 		public int PageNumber { get; set; } = 1;
+		[BindProperty(SupportsGet = true)]
+		public string SortBy { get; set; }
 
 		public CommentModel(ICommentService commentService)
 		{
@@ -35,6 +37,27 @@ namespace Group06_Project.RazorPage.Areas.Admin.Pages.Comment
 		{
 			_commentService.RemoveComment(commentId);
 			return RedirectToPage(new { pageNumber = 1 });
+		}
+		public IActionResult OnGetSort(string sortBy)
+		{
+			SortBy = sortBy;
+			LoadComments(null);
+			return Page();
+		}
+		private void LoadComments(string searchTerm)
+		{
+			if (string.IsNullOrEmpty(searchTerm))
+			{
+				Comments = SortBy == "asc"
+					? _commentService.GetAllCommentsByAsc(PageNumber)
+					: _commentService.GetAllComments(PageNumber);
+			}
+			else
+			{
+				Comments = SortBy == "asc"
+					? _commentService.SearchComments(searchTerm, PageNumber)
+					: _commentService.SearchComments(searchTerm, PageNumber);
+			}
 		}
 	}
 }

@@ -61,6 +61,16 @@ public class CommentService : ICommentService
         };
         return _unitOfWork.Comments.GetAllComments(pageRequest);
     }
+	public Page<CommentList> GetAllCommentsByAsc(int commentPageNo)
+	{
+		var pageRequest = new PageRequest<Comment>
+		{
+			PageNumber = commentPageNo,
+			Size = CommentPageSize,
+			Sort = "Time Asc"
+		};
+		return _unitOfWork.Comments.GetAllCommentsByAsc(pageRequest);
+	}
 	public Page<CommentList> SearchComments(string searchTerm, int commentPageNo)
 	{
 		var pageRequest = new PageRequest<Comment>
@@ -68,6 +78,17 @@ public class CommentService : ICommentService
 			PageNumber = commentPageNo,
 			Size = CommentPageSize,
 			Sort = "Time Desc"
+		};
+
+		return _unitOfWork.Comments.SearchComments(searchTerm, pageRequest);
+	}
+	public Page<CommentList> SearchCommentsByAsc(string searchTerm, int commentPageNo)
+	{
+		var pageRequest = new PageRequest<Comment>
+		{
+			PageNumber = commentPageNo,
+			Size = CommentPageSize,
+			Sort = "Time Asc"
 		};
 
 		return _unitOfWork.Comments.SearchComments(searchTerm, pageRequest);
