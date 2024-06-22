@@ -55,7 +55,7 @@ namespace Group06_Project.RazorPage.Areas.Admin.Pages.Comment
 			else
 			{
 				Comments = SortBy == "asc"
-					? _commentService.SearchComments(searchTerm, PageNumber)
+					? _commentService.SearchCommentsByAsc(searchTerm, PageNumber)
 					: _commentService.SearchComments(searchTerm, PageNumber);
 			}
 		}
