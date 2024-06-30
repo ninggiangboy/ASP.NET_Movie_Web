@@ -1,5 +1,6 @@
-﻿@page
-@model Update
+@page
+@model Create
+
 @{
     ViewData["Title"] = "Update Catalog";
     ViewData["ActivePage"] = "Catalog";
@@ -9,28 +10,27 @@
         <!-- main title -->
         <div class="col-12">
             <div class="main__title">
-                <h2>Update item</h2>
+                <h2>Add Item</h2>
             </div>
         </div>
         <!-- end main title -->
         <!-- form -->
         <div class="col-12">
             <form method="post" class="form" enctype="multipart/form-data">
-                <input type="hidden" asp-for="@Model.Id" value="@Model.Id"/>
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <div class="form__img">
                             <label for="form__img-upload">Upload cover</label>
                             <input id="form__img-upload" name="PosterFile" type="file" accept=".png, .jpg, .jpeg">
-                            <img id="form__img" src="@Model.PosterUrl" alt=" ">
+                            <img id="form__img" src="" alt=" ">
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="form__img">
                             <label for="form__thumbnail-upload">Upload thumbnail</label>
                             <input id="form__thumbnail-upload" name="ThumbnailFile" type="file" accept=".png, .jpg, .jpeg">
-                            <img id="form__thumbnail" src="@Model.ThumbnailUrl" alt="Thumbnail">
+                            <img id="form__thumbnail" src="" alt="Thumbnail">
                         </div>
                     </div>
                 </div>
@@ -114,7 +114,7 @@
                                 <select class="js-example-basic-multiple" id="genre" name="FilmGenres" multiple="multiple" required>
                                     @foreach (var genre in Model.Genres)
                                     {
-                                        <option value="@genre.Value" selected="@(Model.FilmGenres.Any(item => item.Value == genre.Value))">@genre.Label</option>
+                                        <option value="@genre.Value" selected="@(Model.Genres.Any(item => item.Value == genre.Value))">@genre.Label</option>
                                     }
                                 </select>
                             </div>
@@ -135,14 +135,14 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="col-12 col-md-6">
-                        <video style="max-width: 600px" controls poster="@Model.VideoUrl" id="player">
-                            <!-- Video files -->
-                            <source src="@Model.VideoUrl" type="video/mp4" size="720">
-                            <!-- Fallback for browsers that don't support the <video> element -->
-                            <a href="@Model.VideoUrl" download>Download</a>
-                        </video>
-                    </div>
+                    @* <div class="col-12 col-md-6"> *@
+                    @*     <video style="max-width: 600px" controls poster="@Model.VideoUrl" id="player"> *@
+                    @*         <!-- Video files --> *@
+                    @*         <source src="@Model.VideoUrl" type="video/mp4" size="720"> *@
+                    @*         <!-- Fallback for browsers that don't support the <video> element --> *@
+                    @*         <a href="@Model.VideoUrl" download>Download</a> *@
+                    @*     </video> *@
+                    @* </div> *@
                     <div class="col-12">
                         <div class="row">
                             <div class="col-12 col-lg-6">

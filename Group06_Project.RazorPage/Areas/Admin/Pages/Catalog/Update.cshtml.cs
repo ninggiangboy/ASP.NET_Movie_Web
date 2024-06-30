@@ -1,17 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Enums;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Group06_Project.RazorPage.Areas.Admin.Pages.Catalog;
 
 public class Update : PageModel
 {
-    private readonly IFilmService _filmService;
     private readonly ICountryService _countryService;
+    private readonly IFilmService _filmService;
     private readonly IGenreService _genreService;
 
     public Update(IFilmService filmService, ICountryService countryService, IGenreService genreService)
@@ -24,9 +24,9 @@ public class Update : PageModel
     [BindProperty(SupportsGet = true)] public int? Id { get; set; }
     [BindProperty] [Required] public string Title { get; set; } = default!;
 
-    [BindProperty] public string OtherTitle { get; set; }
+    [BindProperty] public string? OtherTitle { get; set; }
 
-    [BindProperty] [Required] public string Description { get; set; } = default!;
+    [BindProperty] [Required] public string? Description { get; set; }
 
     [BindProperty] public int? ReleaseYear { get; set; }
 
@@ -38,21 +38,19 @@ public class Update : PageModel
 
     [BindProperty] public int? DurationPerEpisode { get; set; }
 
-    [BindProperty] [Required] public string Actor { get; set; } = default!;
+    [BindProperty] [Required] public string? Actor { get; set; }
 
-    [BindProperty] [Required] public string Director { get; set; } = default!;
+    [BindProperty] [Required] public string? Director { get; set; }
 
-    [BindProperty] [Required] public int TotalView { get; set; } = default!;
-
-    [BindProperty] [Required] public int CountryId { get; set; } = default!;
+    [BindProperty] [Required] public int CountryId { get; set; }
     public IEnumerable<SelectOption> FilmGenres { get; set; } = default!; // Initialize to avoid null reference
 
-    [BindProperty] public int Type { get; set; } = default!;
+    [BindProperty] public int Type { get; set; }
 
     [BindProperty] public IFormFile? PosterFile { get; set; }
     [BindProperty] public IFormFile? VideoFile { get; set; }
     [BindProperty] public IFormFile? ThumbnailFile { get; set; }
-    [BindProperty] public IFormFile? TrailerFile { get; set; }
+    [BindProperty] public string? TrailerFile { get; set; }
 
     [BindProperty] public string? PosterUrl { get; set; }
     [BindProperty] public string? ThumbnailUrl { get; set; }
@@ -65,23 +63,19 @@ public class Update : PageModel
 
     public Task<IActionResult> OnGetAsync()
     {
-        if (Id == null)
-        {
-            return Task.FromResult<IActionResult>(RedirectToRoute("./404.html"));
-        }
+        if (Id == null) return Task.FromResult<IActionResult>(RedirectToRoute("./404.html"));
         LoadData();
         return Task.FromResult<IActionResult>(Page());
     }
 
     public async Task<IActionResult> OnPostAsync(int? id)
     {
-        if (id == null)
-        {
-            return RedirectToPage("./404.html");
-        }
+        // if (id == null) return RedirectToPage("./404.html");
 
         if (!ModelState.IsValid)
         {
+            Console.WriteLine("Invalid model state: " + string.Join(", ",
+                ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList()));
             LoadData();
             return Page();
         }
@@ -101,7 +95,6 @@ public class Update : PageModel
                 DurationPerEpisode = DurationPerEpisode,
                 Actor = Actor,
                 Director = Director,
-                TotalView = TotalView,
                 CountryId = CountryId,
                 Type = Type switch
                 {
@@ -114,7 +107,7 @@ public class Update : PageModel
                 ThumbnailFile = ThumbnailFile,
                 PosterFile = PosterFile,
                 VideoFile = VideoFile,
-                TrailerFile = TrailerFile,
+                TrailerUrl = TrailerUrl
             };
             await _filmService.UpdateFilm(updateFilm);
             return RedirectToPage("./Index");
@@ -128,38 +121,38 @@ public class Update : PageModel
 
     private void LoadData()
     {
-        Countries = _countryService.GetCountryHomeItems().Select( c => new SelectOption { Value = c.Id, Label = c.Name });
-        Genres = _genreService.GetGenreHomeItems().Select( g => new SelectOption { Value = g.Id, Label = g.Name });
+        Countries = _countryService.GetCountryHomeItems()
+            .Select(c => new SelectOption { Value = c.Id, Label = c.Name });
+        Genres = _genreService.GetGenreHomeItems().Select(g => new SelectOption { Value = g.Id, Label = g.Name });
         try
         {
-            var film = _filmService.GetFilmDetailWithURL(Id.Value).Result;
-            if (film == null)
+            if (Id != null)
             {
-                RedirectToPage("./404.html");
+                var film = _filmService.GetFilmDetailWithURL(Id.Value).Result;
+                // if (film == null) RedirectToPage("./404.html");
+                Title = film.Title;
+                OtherTitle = film.OtherTitle;
+                Description = film.Description;
+                ReleaseYear = film.ReleaseYear;
+                Duration = film.Duration;
+                AverageRating = film.AverageRating;
+                Type = film.Type switch
+                {
+                    FilmType.Movie => 0,
+                    FilmType.Series => 1,
+                    _ => 0
+                };
+                FilmGenres = film.Genres;
+                Actor = film.Actor;
+                Director = film.Director;
+                CountryId = film.Country?.Value ?? 0;
+                TotalEpisode = film.TotalEpisode;
+                DurationPerEpisode = film.DurationPerEpisode;
+                PosterUrl = film.PosterUrl;
+                ThumbnailUrl = film.ThumbnailUrl;
+                VideoUrl = film.VideoUrl;
+                TrailerUrl = film.TrailerUrl;
             }
-            Title = film.Title;
-            OtherTitle = film.OtherTitle;
-            Description = film.Description;
-            ReleaseYear = film.ReleaseYear;
-            Duration = film.Duration;
-            AverageRating = film.AverageRating;
-            Type = film.Type switch
-            {
-                FilmType.Movie => 0,
-                FilmType.Series => 1,
-                _ => 0
-            };
-            FilmGenres = film.Genres;
-            Actor = film.Actor;
-            Director = film.Director;
-            TotalView = film.TotalView;
-            CountryId = film.Country?.Value ?? 0;
-            TotalEpisode = film.TotalEpisode;
-            DurationPerEpisode = film.DurationPerEpisode;
-            PosterUrl = film.PosterUrl;
-            ThumbnailUrl = film.ThumbnailUrl;
-            VideoUrl = film.VideoUrl;
-            TrailerUrl = film.TrailerUrl;
         }
         catch (Exception e)
         {

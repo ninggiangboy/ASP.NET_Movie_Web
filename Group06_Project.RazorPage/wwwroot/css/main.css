@@ -1,3 +1,7 @@
+img.error::before {
+    background: url(https://www.w3schools.com/html/img_chania.jpg) no-repeat center;
+}
+
 #toast {
     position: fixed;
     top: 32px;
@@ -5092,7 +5096,7 @@ body::-webkit-scrollbar {
     border-radius: 16px;
     padding: 20px;
     border: 1px solid rgba(47, 128, 237, 0.1);
-    margin-top: 60px;
+    margin: 60px 0;
     background-color: #131720;
 }
 

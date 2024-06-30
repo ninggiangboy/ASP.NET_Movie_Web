@@ -9,9 +9,9 @@ public class FilmItemCreate
     public string Title { get; set; } = null!;
     public string? OtherTitle { get; set; }
     public string? Description { get; set; }
-    public IFormFile? VideoFile { get; set; } 
-    public IFormFile? TrailerFile { get; set; } 
-    public IFormFile? ThumbnailFile { get; set; } 
+    public IFormFile? VideoFile { get; set; }
+    public string? TrailerUrl { get; set; }
+    public IFormFile? ThumbnailFile { get; set; }
     public IFormFile? PosterFile { get; set; }
     public int? Duration { get; set; }
     public decimal? AverageRating { get; set; }

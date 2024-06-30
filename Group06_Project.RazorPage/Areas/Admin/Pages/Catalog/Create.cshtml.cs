@@ -1,20 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Enums;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Group06_Project.RazorPage.Areas.Admin.Pages;
+namespace Group06_Project.RazorPage.Areas.Admin.Pages.Catalog;
 
-public class AddItem : PageModel
+public class Create : PageModel
 {
-    private readonly IFilmService _filmService;
     private readonly ICountryService _countryService;
+    private readonly IFilmService _filmService;
     private readonly IGenreService _genreService;
 
-    public AddItem(IFilmService filmService, ICountryService countryService, IGenreService genreService)
+    public Create(IFilmService filmService, ICountryService countryService, IGenreService genreService)
     {
         _filmService = filmService;
         _countryService = countryService;
@@ -56,16 +56,14 @@ public class AddItem : PageModel
     [DataType(DataType.Upload)]
     public IFormFile? VideoFile { get; set; }
 
-    [BindProperty]
-    [DataType(DataType.Upload)]
-    public IFormFile? TrailerFile { get; set; }
+    [BindProperty] public string? TrailerUrl { get; set; }
 
     [BindProperty]
     [DataType(DataType.Upload)]
     public IFormFile? ThumbnailFile { get; set; }
 
-    public IEnumerable<HomeItem> Countries { get; set; } = default!; // Initialize to avoid null reference
-    public IEnumerable<HomeItem> Genres { get; set; } = default!; // Initialize to avoid null reference
+    public IEnumerable<SelectOption> Countries { get; set; } = default!; // Initialize to avoid null reference
+    public IEnumerable<SelectOption> Genres { get; set; } = default!; // Initialize to avoid null reference
 
 
     public Task<IActionResult> OnGetAsync()
@@ -101,7 +99,7 @@ public class AddItem : PageModel
                 CountryId = CountryId,
                 Genres = filmGenres,
 
-                TrailerFile = TrailerFile,
+                TrailerUrl = TrailerUrl,
                 VideoFile = VideoFile,
                 PosterFile = PosterFile,
                 ThumbnailFile = ThumbnailFile,
@@ -111,7 +109,7 @@ public class AddItem : PageModel
                     0 => FilmType.Movie,
                     1 => FilmType.Series,
                     _ => FilmType.Movie
-                },
+                }
             };
             await _filmService.AddFilm(createFilm);
             return RedirectToPage("./Catalog/Index");
@@ -127,8 +125,9 @@ public class AddItem : PageModel
     {
         try
         {
-            Genres = _genreService.GetGenreHomeItems();
-            Countries = _countryService.GetCountryHomeItems();
+            Countries = _countryService.GetCountryHomeItems()
+                .Select(c => new SelectOption { Value = c.Id, Label = c.Name });
+            Genres = _genreService.GetGenreHomeItems().Select(g => new SelectOption { Value = g.Id, Label = g.Name });
         }
         catch (Exception e)
         {

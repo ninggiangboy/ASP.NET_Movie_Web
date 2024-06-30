@@ -192,8 +192,6 @@ $(document).ready(function () {
                 items: 3,
                 margin: 30,
                 center: true,
-                mouseDrag: false,
-                dots: false,
                 startPosition: 1,
                 slideBy: 3,
             },
@@ -357,14 +355,10 @@ $(document).ready(function () {
             1200: {
                 items: 4,
                 margin: 20,
-                dots: false,
-                mouseDrag: false,
             },
             1440: {
                 items: 4,
                 margin: 20,
-                dots: false,
-                mouseDrag: false,
             },
         }
     });

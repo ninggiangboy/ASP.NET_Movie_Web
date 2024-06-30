@@ -58,11 +58,11 @@
                 <div class="">
                     <div class="" role="tabpanel">
                         <div class="row row--grid">
-                            @if (!Model.Films.Data!.Any())
+                            @if (!Model.Films.Data.Any())
                             {
                                 <p class="section__text">No films found</p>
                             }
-                            @foreach (var item in Model.Films.Data!)
+                            @foreach (var item in Model.Films.Data)
                             {
                                 <div class="col-6 col-sm-4 col-lg-3 col-xl-2">
                                     <div class="card">

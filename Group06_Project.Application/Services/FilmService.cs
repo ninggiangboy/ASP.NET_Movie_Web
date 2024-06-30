@@ -11,8 +11,8 @@ namespace Group06_Project.Application.Services;
 public class FilmService : IFilmService
 {
     private const int HomeFilmListSize = 18;
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IStorageService _storageService;
+    private readonly IUnitOfWork _unitOfWork;
 
     public FilmService(IUnitOfWork unitOfWork, IStorageService storageService)
     {
@@ -66,28 +66,15 @@ public class FilmService : IFilmService
     public async Task<FilmItemCreate> AddFilm(FilmItemCreate film)
     {
         var videoUrl = string.Empty;
-        var trailerUrl = string.Empty;
         var thumbnailUrl = string.Empty;
         var posterUrl = string.Empty;
-        if (film.VideoFile != null)
-        {
-            videoUrl = await _storageService.UploadVideo(film.VideoFile);
-        }
+        if (film.VideoFile != null) videoUrl = await _storageService.UploadVideo(film.VideoFile);
 
-        if (film.TrailerFile != null)
-        {
-            trailerUrl = await _storageService.UploadVideo(film.TrailerFile);
-        }
+        // if (film.TrailerFile != null) trailerUrl = await _storageService.UploadVideo(film.TrailerFile);
 
-        if (film.ThumbnailFile != null)
-        {
-            thumbnailUrl = await _storageService.UploadImage(film.ThumbnailFile);
-        }
+        if (film.ThumbnailFile != null) thumbnailUrl = await _storageService.UploadImage(film.ThumbnailFile);
 
-        if (film.PosterFile != null)
-        {
-            posterUrl = await _storageService.UploadImage(film.PosterFile);
-        }
+        if (film.PosterFile != null) posterUrl = await _storageService.UploadImage(film.PosterFile);
 
         var filmGenre = _unitOfWork.Genres.GetGenreByIds(film.Genres.Select(g => g.Id)).ToList();
         var entity = new Film
@@ -96,7 +83,7 @@ public class FilmService : IFilmService
             OtherTitle = film.OtherTitle,
             Description = film.Description,
             VideoUrl = videoUrl,
-            TrailerUrl = trailerUrl,
+            TrailerUrl = film.TrailerUrl,
             ThumbnailUrl = thumbnailUrl,
             PosterUrl = posterUrl,
             Duration = film.Duration,
@@ -106,7 +93,7 @@ public class FilmService : IFilmService
             Type = film.Type,
             Actor = film.Actor,
             Director = film.Director,
-            TotalView = (film.TotalView ?? 0),
+            TotalView = film.TotalView ?? 0,
             ReleaseYear = film.ReleaseYear,
             CountryId = film.CountryId,
             CreatedAt = DateTime.Now,
@@ -122,17 +109,14 @@ public class FilmService : IFilmService
         try
         {
             var videoUrl = string.Empty;
-            var trailerUrl = string.Empty;
             var thumbnailUrl = string.Empty;
             var posterUrl = string.Empty;
             var currentFilm = _unitOfWork.Films.GetFilmByIdWithGenresAndCountry(film.Id);
-            
+
             if (film.VideoFile != null)
             {
                 if (currentFilm.VideoUrl != null && currentFilm.VideoUrl != string.Empty)
-                {
                     _storageService.DeleteFile(currentFilm.VideoUrl);
-                }
                 videoUrl = await _storageService.UploadVideo(film.VideoFile);
             }
             else
@@ -140,25 +124,23 @@ public class FilmService : IFilmService
                 videoUrl = currentFilm.VideoUrl;
             }
 
-            if (film.TrailerFile != null )
-            {
-                if (currentFilm.TrailerUrl != null && currentFilm.TrailerUrl != string.Empty)
-                {
-                    _storageService.DeleteFile(currentFilm.TrailerUrl);
-                }
-                trailerUrl = await _storageService.UploadVideo(film.TrailerFile);
-            }
-            else
-            {
-                trailerUrl = currentFilm.TrailerUrl;
-            }
+            // if (film.TrailerFile != null )
+            // {
+            //     if (currentFilm.TrailerUrl != null && currentFilm.TrailerUrl != string.Empty)
+            //     {
+            //         _storageService.DeleteFile(currentFilm.TrailerUrl);
+            //     }
+            //     trailerUrl = await _storageService.UploadVideo(film.TrailerFile);
+            // }
+            // else
+            // {
+            // trailerUrl = currentFilm.TrailerUrl;
+            // }
 
             if (film.ThumbnailFile != null)
             {
                 if (currentFilm.ThumbnailUrl != null && currentFilm.ThumbnailUrl != string.Empty)
-                {
                     _storageService.DeleteFile(currentFilm.ThumbnailUrl);
-                }
                 thumbnailUrl = await _storageService.UploadImage(film.ThumbnailFile);
             }
             else
@@ -169,9 +151,7 @@ public class FilmService : IFilmService
             if (film.PosterFile != null)
             {
                 if (currentFilm.PosterUrl != null && currentFilm.PosterUrl != string.Empty)
-                {
                     _storageService.DeleteFile(currentFilm.PosterUrl);
-                }
                 posterUrl = await _storageService.UploadImage(film.PosterFile);
             }
             else
@@ -187,7 +167,7 @@ public class FilmService : IFilmService
             currentFilm.OtherTitle = film.OtherTitle;
             currentFilm.Description = film.Description;
             currentFilm.VideoUrl = videoUrl;
-            currentFilm.TrailerUrl = trailerUrl;
+            currentFilm.TrailerUrl = film.TrailerUrl;
             currentFilm.ThumbnailUrl = thumbnailUrl;
             currentFilm.PosterUrl = posterUrl;
             currentFilm.Duration = film.Duration;
@@ -197,7 +177,7 @@ public class FilmService : IFilmService
             currentFilm.Type = film.Type;
             currentFilm.Actor = film.Actor;
             currentFilm.Director = film.Director;
-            currentFilm.TotalView = (film.TotalView ?? 0);
+            currentFilm.TotalView = film.TotalView ?? 0;
             currentFilm.ReleaseYear = film.ReleaseYear;
             currentFilm.CountryId = film.CountryId;
             currentFilm.Genres.AddRange(filmGenre);
@@ -218,25 +198,14 @@ public class FilmService : IFilmService
         try
         {
             var film = _unitOfWork.Films.GetById(id);
-            if (film.PosterUrl != null && film.PosterUrl != string.Empty)
-            {
-                _storageService.DeleteFile(film.PosterUrl);
-            }
+            if (film.PosterUrl != null && film.PosterUrl != string.Empty) _storageService.DeleteFile(film.PosterUrl);
 
             if (film.ThumbnailUrl != null && film.ThumbnailUrl != string.Empty)
-            {
                 _storageService.DeleteFile(film.ThumbnailUrl);
-            }
 
-            if (film.VideoUrl != null && film.VideoUrl != string.Empty)
-            {
-                _storageService.DeleteFile(film.VideoUrl);
-            }
+            if (film.VideoUrl != null && film.VideoUrl != string.Empty) _storageService.DeleteFile(film.VideoUrl);
 
-            if (film.TrailerUrl != null && film.TrailerUrl != string.Empty)
-            {
-                _storageService.DeleteFile(film.TrailerUrl);
-            }
+            if (film.TrailerUrl != null && film.TrailerUrl != string.Empty) _storageService.DeleteFile(film.TrailerUrl);
 
             _unitOfWork.Films.DeleteFilm(film);
             return await _unitOfWork.CommitAsync();
@@ -253,30 +222,15 @@ public class FilmService : IFilmService
         try
         {
             var film = _unitOfWork.Films.GetFilmDetail(id).Result;
-            if (film == null)
-            {
-                return null;
-            }
+            if (film == null) return null;
 
-            if (film.PosterUrl != null)
-            {
-                film.PosterUrl = await _storageService.GetImageUrl(film.PosterUrl);
-            }
+            if (film.PosterUrl != null) film.PosterUrl = await _storageService.GetImageUrl(film.PosterUrl);
 
-            if (film.ThumbnailUrl != null)
-            {
-                film.ThumbnailUrl = await _storageService.GetImageUrl(film.ThumbnailUrl);
-            }
+            if (film.ThumbnailUrl != null) film.ThumbnailUrl = await _storageService.GetImageUrl(film.ThumbnailUrl);
 
-            if (film.VideoUrl != null)
-            {
-                film.VideoUrl = await _storageService.GetVideoUrl(film.VideoUrl);
-            }
+            if (film.VideoUrl != null) film.VideoUrl = await _storageService.GetVideoUrl(film.VideoUrl);
 
-            if (film.TrailerUrl != null)
-            {
-                film.TrailerUrl = await _storageService.GetVideoUrl(film.TrailerUrl);
-            }
+            if (film.TrailerUrl != null) film.TrailerUrl = await _storageService.GetVideoUrl(film.TrailerUrl);
 
             var filmDetail = new FilmItemDetail
             {
@@ -298,7 +252,7 @@ public class FilmService : IFilmService
                 TotalView = film.TotalView,
                 ReleaseYear = film.ReleaseYear,
                 Country = film.Country,
-                Genres = film.Genres,
+                Genres = film.Genres
             };
             return filmDetail;
         }

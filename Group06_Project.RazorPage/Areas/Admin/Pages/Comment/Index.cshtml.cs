@@ -1,63 +1,43 @@
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace Group06_Project.RazorPage.Areas.Admin.Pages.Comment
+namespace Group06_Project.RazorPage.Areas.Admin.Pages.Comment;
+
+public class CommentModel : PageModel
 {
-	public class CommentModel : PageModel
-	{
-		private readonly ICommentService _commentService;
+    private readonly ICommentService _commentService;
 
-		public Page<CommentList> Comments { get; set; }
-		[BindProperty(SupportsGet = true)]
-		public int PageNumber { get; set; } = 1;
-		[BindProperty(SupportsGet = true)]
-		public string SortBy { get; set; }
 
-		public CommentModel(ICommentService commentService)
-		{
-			_commentService = commentService;
-			Comments = new Page<CommentList>();
-		}
+    public CommentModel(ICommentService commentService)
+    {
+        _commentService = commentService;
+    }
 
-		public void OnGet()
-		{
-			Comments = _commentService.GetAllComments(PageNumber);
+    public Page<CommentList> Comments { get; set; } = null!;
 
-		}
+    [BindProperty(SupportsGet = true)] public int? PageNo { get; set; }
 
-		public IActionResult OnPostSearch(string searchTerm)
-		{
-			Comments = _commentService.SearchComments(searchTerm, PageNumber);
-			return Page();
-		}
+    [BindProperty(SupportsGet = true)] public string? Sort { get; set; }
+    [BindProperty(SupportsGet = true)] public string? UserId { get; set; }
+    [BindProperty(SupportsGet = true)] public int? FilmId { get; set; }
 
-		public IActionResult OnPostDelete(int commentId)
-		{
-			_commentService.RemoveComment(commentId);
-			return RedirectToPage(new { pageNumber = 1 });
-		}
-		public IActionResult OnGetSort(string sortBy)
-		{
-			SortBy = sortBy;
-			LoadComments(null);
-			return Page();
-		}
-		private void LoadComments(string searchTerm)
-		{
-			if (string.IsNullOrEmpty(searchTerm))
-			{
-				Comments = SortBy == "asc"
-					? _commentService.GetAllCommentsByAsc(PageNumber)
-					: _commentService.GetAllComments(PageNumber);
-			}
-			else
-			{
-				Comments = SortBy == "asc"
-					? _commentService.SearchComments(searchTerm, PageNumber)
-					: _commentService.SearchComments(searchTerm, PageNumber);
-			}
-		}
-	}
+    public IEnumerable<SelectListItem> SortOptions { get; set; } = new List<SelectListItem>
+    {
+        new("Latest", "Time DESC"),
+        new("Oldest", "Time ASC")
+    };
+
+    public void OnGet()
+    {
+        Comments = _commentService.GetAllComments(PageNo, Sort, UserId, FilmId);
+    }
+
+    public IActionResult OnPostDelete(int commentId)
+    {
+        _commentService.RemoveComment(commentId);
+        return RedirectToPage(new { pageNumber = 1 });
+    }
 }

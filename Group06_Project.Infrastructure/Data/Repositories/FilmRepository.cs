@@ -34,7 +34,8 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
             PageNumber = pageRequest.PageNumber,
             PageSize = pageRequest.Size,
             TotalElement = totalElement,
-            Data = totalElement == 0 ? new List<FilmItemList>() : data.ToList()
+            Data = totalElement == 0 ? new List<FilmItemList>() : data.ToList(),
+            Sort = pageRequest.Sort
         };
     }
 
@@ -88,44 +89,6 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
             .Include(f => f.Episodes)
             .Where(f => f.Id == id)
             .ProjectTo<FilmItemDetail>(_mapper)
-            // .Select(f => new FilmItemDetail
-            // {
-            //     Title = f.Title,
-            //     OtherTitle = f.OtherTitle,
-            //     Description = f.Description,
-            //     TrailerUrl = f.TrailerUrl,
-            //     ThumbnailUrl = f.ThumbnailUrl,
-            //     Duration = f.Duration,
-            //     AverageRating = f.AverageRating,
-            //     TotalEpisode = f.TotalEpisode,
-            //     VideoUrl = f.VideoUrl,
-            //     DurationPerEpisode = f.DurationPerEpisode,
-            //     Type = f.Type,
-            //     Actor = f.Actor,
-            //     Director = f.Director,
-            //     TotalView = f.TotalView,
-            //     ReleaseYear = f.ReleaseYear,
-            //     Country = f.CountryId != null
-            //         ? new SelectOption
-            //         {
-            //             Value = f.CountryId ?? 0,
-            //             Label = f.Country!.Name ?? ""
-            //         }
-            //         : null,
-            //     Genres = f.Genres.Select(g => new SelectOption
-            //     {
-            //         Value = g.Id,
-            //         Label = g.Name
-            //     }),
-            //     Episodes = f.Episodes.OrderBy(e => e.Number).Select(e => new EpisodeItem
-            //     {
-            //         Id = e.Id,
-            //         Number = e.Number,
-            //         Title = e.Title,
-            //         Duration = e.Duration,
-            //         ThumbnailUrl = e.ThumbnailUrl,
-            //         VideoUrl = e.VideoUrl
-            //     }).ToList()})
             .FirstOrDefaultAsync();
     }
 

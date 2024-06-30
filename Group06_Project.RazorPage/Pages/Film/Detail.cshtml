@@ -1,5 +1,9 @@
 @page
+@inject SignInManager<User> SignInManager
+@using Group06_Project.Domain.Entities
 @using Group06_Project.Domain.Enums
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model Detail
 @{
     ViewData["Title"] = Model.Film.Title;
@@ -205,7 +209,7 @@
 <div class="row">
     <div class="col-12 col-xl-8">
         <!-- comments and reviews -->
-        <div class="comments">
+        <div class="comments" id="comment">
             <!-- tabs nav -->
             <ul class="nav nav-tabs comments__title comments__title--tabs" id="comments__tabs" role="tablist">
                 <li class="nav-item">
@@ -216,7 +220,16 @@
                 </li>
             </ul>
             <!-- end tabs nav -->
-
+            @if (SignInManager.IsSignedIn(User))
+            {
+                <form asp-page-handler="AddComment" class="comments__form" method="post">
+                    <div class="sign__group">
+                        <input name="id" hidden value="@Model.Film.Id"/>
+                        <textarea asp-for="InputComment.Content" id="text" class="sign__textarea" required placeholder="Add comment"></textarea>
+                    </div>
+                    <button type="submit" class="sign__btn">Send</button>
+                </form>
+            }
             <!-- tabs -->
             <div class="tab-content">
                 <!-- comments -->
@@ -243,11 +256,11 @@
                                 @if (Model.Comments.HasPrevious)
                                 {
                                     <li>
-                                        <a asp-page="./Index"
+                                        <a asp-page="/Film/Detail"
                                            asp-route-CommentPageNo="@(currentPage - 1)"
                                            asp-route-Id="@Model.Film.Id"
-                                           asp-route-Episode="@Model.Episode">
-                                            >
+                                           asp-route-Episode="@Model.Episode"
+                                           fragment="comment">
                                             <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
@@ -258,10 +271,11 @@
                                 @if (startPage > 1)
                                 {
                                     <li>
-                                        <a asp-page="./Index"
+                                        <a asp-page="/Film/Detail"
                                            asp-route-CommentPageNo="1"
                                            asp-route-Id="@Model.Film.Id"
-                                           asp-route-Episode="@Model.Episode">
+                                           asp-route-Episode="@Model.Episode"
+                                           fragment="comment">
                                             1
                                         </a>
                                     </li>
@@ -275,10 +289,11 @@
                                 @for (var i = startPage; i <= endPage; i++)
                                 {
                                     <li class="@(currentPage == i ? "active" : "")">
-                                        <a asp-page="./Index"
+                                        <a asp-page="/Film/Detail"
                                            asp-route-CommentPageNo="@i"
                                            asp-route-Id="@Model.Film.Id"
-                                           asp-route-Episode="@Model.Episode">
+                                           asp-route-Episode="@Model.Episode"
+                                           fragment="comment">
                                             @i
                                         </a>
                                     </li>
@@ -292,10 +307,11 @@
                                 @if (endPage < totalPages)
                                 {
                                     <li>
-                                        <a asp-page="./Index"
+                                        <a asp-page="/Film/Detail"
                                            asp-route-CommentPageNo="@totalPages"
                                            asp-route-Id="@Model.Film.Id"
-                                           asp-route-Episode="@Model.Episode">
+                                           asp-route-Episode="@Model.Episode"
+                                           fragment="comment">
                                             @totalPages
                                         </a>
                                     </li>
@@ -303,10 +319,11 @@
                                 @if (Model.Comments.HasNext)
                                 {
                                     <li>
-                                        <a asp-page="./Index"
+                                        <a asp-page="/Film/Detail"
                                            asp-route-CommentPageNo="@(currentPage + 1)"
                                            asp-route-Id="@Model.Film.Id"
-                                           asp-route-Episode="@Model.Episode">
+                                           asp-route-Episode="@Model.Episode"
+                                           fragment="comment">
                                             <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
@@ -316,13 +333,6 @@
                             </ul>
                         </div>
                     }
-
-                    <form action="#" class="comments__form">
-                        <div class="sign__group">
-                            <textarea id="text" name="text" class="sign__textarea" placeholder="Add comment"></textarea>
-                        </div>
-                        <button type="button" class="sign__btn">Send</button>
-                    </form>
                 </div>
                 <!-- end comments -->
             </div>

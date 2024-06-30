@@ -2,9 +2,11 @@
 
 public class CommentList
 {
-    public int Id { get; set; }
-    public string UserId { get; set; } = null!;
-    public int FilmId { get; set; }
-    public string Content { get; set; } = null!;
-    public DateTime Time { get; set; }
+    public int Id { get; init; }
+    public string UserId { get; init; } = null!;
+    public string UserName { get; init; } = null!;
+    public int FilmId { get; init; }
+    public string FilmTitle { get; init; } = null!;
+    public string Content { get; init; } = null!;
+    public DateTime Time { get; init; }
 }

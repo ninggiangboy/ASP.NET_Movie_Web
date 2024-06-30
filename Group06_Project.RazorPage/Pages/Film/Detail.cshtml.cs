@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using Group06_Project.Domain.Enums;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Build.Framework;
 
 namespace Group06_Project.RazorPage.Pages.Film;
 
@@ -21,6 +23,8 @@ public class Detail : PageModel
     [BindProperty(SupportsGet = true)] public int? Episode { get; set; }
     public FilmItemDetail Film { get; set; } = null!;
     public Page<CommentItem> Comments { get; set; } = null!;
+
+    [BindProperty] public InputCommentModel InputComment { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int? id)
     {
@@ -45,5 +49,18 @@ public class Detail : PageModel
 
         Comments = _commentService.GetCommentsByFilmId(existFilm.Id, CommentPageNo);
         return Page();
+    }
+
+    public async Task<IActionResult> OnPostAddCommentAsync(int id)
+    {
+        if (!ModelState.IsValid) return RedirectToPage(new { id });
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        await _commentService.AddCommentToFilm(id, InputComment.Content, userId);
+        return Redirect(Url.Page("Detail", new { id }) + "#comment");
+    }
+
+    public class InputCommentModel
+    {
+        [Required] public string Content { get; set; } = null!;
     }
 }
