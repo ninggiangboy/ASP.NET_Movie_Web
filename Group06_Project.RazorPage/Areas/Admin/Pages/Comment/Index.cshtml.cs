@@ -35,9 +35,10 @@ public class CommentModel : PageModel
         Comments = _commentService.GetAllComments(PageNo, Sort, UserId, FilmId);
     }
 
-    public IActionResult OnPostDelete(int commentId)
+    public IActionResult OnPostDelete(int commentId, int? pageNumber)
     {
+        Console.WriteLine("====================================");
         _commentService.RemoveComment(commentId);
-        return RedirectToPage(new { pageNumber = 1 });
+        return RedirectToPage(new { PageNo = pageNumber });
     }
 }

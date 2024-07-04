@@ -143,5 +143,7 @@
         <_ContentIncludedByDefault Remove="Pages\Comments\Index.cshtml"/>
         <_ContentIncludedByDefault Remove="Areas\Admin\Pages\Comments\Index.cshtml"/>
         <_ContentIncludedByDefault Remove="Areas\Admin\Pages\Comments\_ViewImports.cshtml"/>
+        <_ContentIncludedByDefault Remove="Areas\Admin\Pages\Film\Index.cshtml"/>
+        <_ContentIncludedByDefault Remove="Areas\Admin\Pages\Film\_ViewImports.cshtml"/>
     </ItemGroup>
 </Project>

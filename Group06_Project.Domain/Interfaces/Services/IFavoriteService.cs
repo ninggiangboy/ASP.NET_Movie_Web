@@ -8,4 +8,6 @@ public interface IFavoriteService
     ICollection<FilmItemList> GetFilmFavoriteList(string userId);
     void AddFilmToFavoriteList(User user, int filmId);
     void RemoveFilmFromFavoriteList(User user, int filmId);
+    Task ToggleFavoriteFilm(int id, string userId);
+    Task<bool> IsFavoriteFilm(FilmItemDetail existFilm, string userId);
 }

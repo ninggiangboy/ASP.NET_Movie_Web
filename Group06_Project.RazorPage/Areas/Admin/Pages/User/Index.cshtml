@@ -5,7 +5,7 @@
     ViewData["Title"] = "User";
     ViewData["Search"] = Model.Search;
     ViewData["ActivePage"] = "User";
-    var totalPages = Model.Users.PageSize;
+    var totalPages = Model.Users.TotalPage;
     var currentPage = Model.Users.PageNumber;
     var startPage = currentPage - 2;
     var endPage = currentPage + 2;
@@ -44,24 +44,24 @@
             <div class="main__title">
                 <h2>Users</h2>
 
-                <span class="main__title-stat">3 702 total</span>
+                <span class="main__title-stat">Total: @Model.Users.TotalElement.ToString("N0")</span>
 
                 <div class="main__title-wrap">
                     <!-- filter sort -->
-                    <div class="filter" id="filter__sort">
-                        <span class="filter__item-label">Sort by:</span>
-
-                        <div class="filter__item-btn dropdown-toggle" role="navigation" id="filter-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <input type="button" value="Date created">
-                            <span></span>
-                        </div>
-
-                        <ul class="filter__item-menu dropdown-menu scrollbar-dropdown" aria-labelledby="filter-sort">
-                            <li>Date created</li>
-                            <li>Pricing plan</li>
-                            <li>Status</li>
-                        </ul>
-                    </div>
+                    @* <div class="filter" id="filter__sort"> *@
+                    @*     <span class="filter__item-label">Sort by:</span> *@
+                    @* *@
+                    @*     <div class="filter__item-btn dropdown-toggle" role="navigation" id="filter-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> *@
+                    @*         <input type="button" value="Date created"> *@
+                    @*         <span></span> *@
+                    @*     </div> *@
+                    @* *@
+                    @*     <ul class="filter__item-menu dropdown-menu scrollbar-dropdown" aria-labelledby="filter-sort"> *@
+                    @*         <li>Date created</li> *@
+                    @*         <li>Pricing plan</li> *@
+                    @*         <li>Status</li> *@
+                    @*     </ul> *@
+                    @* </div> *@
                     <!-- end filter sort -->
                     <!-- search -->
                     <form action="#" class="main__title-form">
@@ -83,12 +83,12 @@
                 <table class="main__table">
                     <thead>
                     <tr>
-                        <th>Email</th>
-                        <th>UserName</th>
-                        <th>PhoneNumber</th>
-                        <th>Comments</th>
-                        <th>Status</th>
-                        <th>Actions</th>
+                        <th>EMAIL</th>
+                        <th>USERNAME</th>
+                        <th>PHONE</th>
+                        <th>COMMENTS</th>
+                        <th>STATUS</th>
+                        <th>ACTIONS</th>
                     </tr>
                     </thead>
 
@@ -148,40 +148,77 @@
 
         <!-- end users -->
         <!-- paginator -->
-        <div class="col-12">
+        @if (totalPages > 1)
+        {
             <div class="paginator">
-                <span class="paginator__pages">10 from 3 702</span>
-
+                <span class="paginator__pages">@Model.Users.PageNumber from @Model.Users.TotalPage</span>
                 <ul class="paginator__paginator">
-                    <li>
-                        <a href="#">
-                            <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </a>
-                    </li>
-                    <li class="active">
-                        <a href="#">1</a>
-                    </li>
-                    <li>
-                        <a href="#">2</a>
-                    </li>
-                    <li>
-                        <a href="#">3</a>
-                    </li>
-                    <li>
-                        <a href="#">4</a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                        </a>
-                    </li>
+                    @if (Model.Users.HasPrevious)
+                    {
+                        <li>
+                            <a asp-page="./Index"
+                               asp-route-PageNo="@(currentPage - 1)">
+                                <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.75 5.36475L13.1992 5.36475" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M5.771 10.1271L0.749878 5.36496L5.771 0.602051" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        </li>
+                    }
+
+                    @if (startPage > 1)
+                    {
+                        <li>
+                            <a asp-page="./Index"
+                               asp-route-PageNo="1">
+                                1
+                            </a>
+                        </li>
+                    }
+                    @if (startPage > 2)
+                    {
+                        <li>
+                            <span>...</span>
+                        </li>
+                    }
+                    @for (var i = startPage; i <= endPage; i++)
+                    {
+                        <li class="@(currentPage == i ? "active" : "")">
+                            <a asp-page="./Index"
+                               asp-route-PageNo="@i">
+                                @i
+                            </a>
+                        </li>
+                    }
+                    @if (endPage < totalPages - 1)
+                    {
+                        <li>
+                            <a>...</a>
+                        </li>
+                    }
+                    @if (endPage < totalPages)
+                    {
+                        <li>
+                            <a asp-page="./Index"
+                               asp-route-PageNo="@totalPages">
+                                @totalPages
+                            </a>
+                        </li>
+                    }
+                    @if (Model.Users.HasNext)
+                    {
+                        <li>
+                            <a asp-page="./Index"
+                               asp-route-PageNo="@(currentPage + 1)">
+                                <svg width="14" height="11" viewBox="0 0 14 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13.1992 5.3645L0.75 5.3645" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8.17822 0.602051L13.1993 5.36417L8.17822 10.1271" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
-        </div>
+        }
         <!-- end paginator -->
     </div>
 </div>

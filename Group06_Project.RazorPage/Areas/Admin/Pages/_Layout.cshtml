@@ -15,7 +15,7 @@
 <header class="header">
     <div class="header__content">
         <!-- header logo -->
-        <a href="index.html" class="header__logo">
+        <a asp-page="/Index" asp-area="" class="header__logo">
             <img src="~/img/logo.svg" alt="">
         </a>
         <!-- end header logo -->
@@ -34,7 +34,7 @@
 <!-- sidebar -->
 <div class="sidebar">
     <!-- sidebar logo -->
-    <a href="index.html" class="sidebar__logo">
+    <a asp-page="/Index" asp-area="" class="sidebar__logo">
         <img src="~/img/logo.svg" alt="">
     </a>
     <!-- end sidebar logo -->
@@ -92,7 +92,7 @@
         @*     </a> *@
         @* </li> *@
         <li class="sidebar__nav-item">
-            <a href="../main/index.html" class="sidebar__nav-link">
+            <a asp-page="/Index" asp-area="" class="sidebar__nav-link">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path d="M17,11H9.41l3.3-3.29a1,1,0,1,0-1.42-1.42l-5,5a1,1,0,0,0-.21.33,1,1,0,0,0,0,.76,1,1,0,0,0,.21.33l5,5a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42L9.41,13H17a1,1,0,0,0,0-2Z"/>
                 </svg> <span>Back to FlixTV</span>
@@ -102,10 +102,9 @@
     <!-- end sidebar nav -->
 
     <!-- sidebar copyright -->
-    <div class="sidebar__copyright">© FlixTV.template, 2021. <br>Create by <a href="https://themeforest.net/user/dmitryvolkov/portfolio" target="_blank">Dmitry Volkov</a></div>
     <!-- end sidebar copyright -->
 </div>
-<main role="main" style="padding: 0 15px 30px 295px; margin-top: 0;">
+<main role="main" class="main">
     @RenderBody()
 </main>
 <script src="~/js/admin/jquery-3.5.1.min.js"></script>

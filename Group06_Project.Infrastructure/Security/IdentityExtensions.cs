@@ -23,5 +23,9 @@ public static class IdentityExtensions
             googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
             googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
         });
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+        });
     }
 }

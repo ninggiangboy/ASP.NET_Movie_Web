@@ -19,6 +19,8 @@ public static class ManageNavPages
     /// </summary>
     public static string Index => "Index";
 
+    public static string Favorites => "Favorites";
+
     /// <summary>
     ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
     ///     directly from your code. This API may change or be removed in future releases.
@@ -68,6 +70,11 @@ public static class ManageNavPages
     public static string IndexNavClass(ViewContext viewContext)
     {
         return PageNavClass(viewContext, Index);
+    }
+
+    public static string FavoritesNavClass(ViewContext viewContext)
+    {
+        return PageNavClass(viewContext, Favorites);
     }
 
     /// <summary>

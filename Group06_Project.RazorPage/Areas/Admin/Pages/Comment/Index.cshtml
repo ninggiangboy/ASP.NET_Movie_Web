@@ -178,7 +178,7 @@
                     @if (endPage < totalPages - 1)
                     {
                         <li>
-                            <span>...</span>
+                            <a>...</a>
                         </li>
                     }
                     @if (endPage < totalPages)
@@ -234,6 +234,19 @@
 @*         <button class="modal__btn modal__btn--dismiss" type="button">Dismiss</button> *@
 @*     </div> *@
 @* </div> *@
+<div id="modal-delete" class="zoom-anim-dialog mfp-hide modal">
+    <form asp-page-handler="Delete" method="post">
+        <h6 class="modal__title">Delete comment</h6>
+
+        <p class="modal__text">Are you sure to delete this comment?</p>
+        <input type="hidden" name="commentId" id="deleteCommentId">
+        <input type="hidden" name="pageNumber" value="@Model.PageNo">
+        <div class="modal__btns">
+            <input class="modal__btn modal__btn--apply" type="submit" value="Apply"/>
+            <button class="modal__btn modal__btn--dismiss" type="button">Dismiss</button>
+        </div>
+    </form>
+</div>
 <script>
 		document.addEventListener('DOMContentLoaded', function () {
 			let viewButtons = document.querySelectorAll('.main__table-btn--view');
@@ -252,4 +265,14 @@
 				});
 			});
 		});
+
+        document.addEventListener('DOMContentLoaded', function () {
+            let deleteButtons = document.querySelectorAll('.main__table-btn--delete');
+
+            deleteButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    document.getElementById('deleteCommentId').value = button.getAttribute('data-id');
+                });
+            });
+        });
 </script>

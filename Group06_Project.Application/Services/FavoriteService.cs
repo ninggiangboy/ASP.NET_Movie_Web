@@ -35,4 +35,15 @@ public class FavoriteService : IFavoriteService
         _unitOfWork.Films.RemoveFilmFromFavoriteList(user, film);
         _unitOfWork.Commit();
     }
+
+    public async Task ToggleFavoriteFilm(int id, string userId)
+    {
+        await _unitOfWork.Films.ToggleFavoriteFilm(userId, id);
+        await _unitOfWork.CommitAsync();
+    }
+
+    public Task<bool> IsFavoriteFilm(FilmItemDetail existFilm, string userId)
+    {
+        return _unitOfWork.Films.IsFavoriteFilm(existFilm.Id, userId);
+    }
 }

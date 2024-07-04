@@ -14,4 +14,6 @@ public interface IFilmRepository : IRepositoryBase<Film, int>
     Task<FilmItemDetail?> GetFilmDetail(int id);
     void DeleteFilm(Film film);
     Film GetFilmByIdWithGenresAndCountry(int id);
+    Task ToggleFavoriteFilm(string userId, int filmId);
+    Task<bool> IsFavoriteFilm(int existFilmId, string userId);
 }

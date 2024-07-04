@@ -1,9 +1,13 @@
 using System.Security.Claims;
+using Group06_Project.Application;
+using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Enums;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Build.Framework;
 
 namespace Group06_Project.RazorPage.Pages.Film;
@@ -11,12 +15,19 @@ namespace Group06_Project.RazorPage.Pages.Film;
 public class Detail : PageModel
 {
     private readonly ICommentService _commentService;
+    private readonly IFavoriteService _favoriteService;
     private readonly IFilmService _filmService;
+    private readonly IHubContext<SignalRHub> _hub;
+    private readonly UserManager<User> _userManager;
 
-    public Detail(IFilmService filmService, ICommentService commentService)
+    public Detail(IFilmService filmService, ICommentService commentService, IHubContext<SignalRHub> hub,
+        IFavoriteService favoriteService, UserManager<User> userManager)
     {
         _filmService = filmService;
         _commentService = commentService;
+        _hub = hub;
+        _favoriteService = favoriteService;
+        _userManager = userManager;
     }
 
     [BindProperty(SupportsGet = true)] public int CommentPageNo { get; set; } = 1;
@@ -25,6 +36,13 @@ public class Detail : PageModel
     public Page<CommentItem> Comments { get; set; } = null!;
 
     [BindProperty] public InputCommentModel InputComment { get; set; }
+    public bool IsFavorite { get; set; }
+
+    public async Task<IActionResult> OnGetCommentsAsync(int id, int pageNo)
+    {
+        var comments = _commentService.GetCommentsByFilmId(id, pageNo);
+        return new JsonResult(comments);
+    }
 
     public async Task<IActionResult> OnGetAsync(int? id)
     {
@@ -47,7 +65,14 @@ public class Detail : PageModel
             Film.VideoUrl = Film.Episodes.FirstOrDefault()?.VideoUrl;
         }
 
-        Comments = _commentService.GetCommentsByFilmId(existFilm.Id, CommentPageNo);
+        // Comments = _commentService.GetCommentsByFilmId(existFilm.Id, CommentPageNo);
+        Comments = new Page<CommentItem>();
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            IsFavorite = await _favoriteService.IsFavoriteFilm(existFilm, userId!);
+        }
+
         return Page();
     }
 
@@ -56,7 +81,15 @@ public class Detail : PageModel
         if (!ModelState.IsValid) return RedirectToPage(new { id });
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         await _commentService.AddCommentToFilm(id, InputComment.Content, userId);
+        await _hub.Clients.Group(id.ToString()).SendAsync("ReceiveComment");
         return Redirect(Url.Page("Detail", new { id }) + "#comment");
+    }
+
+    public async Task<IActionResult> OnPostFavoriteAsync(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        await _favoriteService.ToggleFavoriteFilm(id, userId);
+        return Redirect(Url.Page("Detail", new { id })!);
     }
 
     public class InputCommentModel

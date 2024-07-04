@@ -1,3 +1,4 @@
+using Group06_Project.Application;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Infrastructure.Configurations;
 using Group06_Project.Infrastructure.Data;
@@ -14,8 +15,8 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddIdentitySetup(builder.Configuration);
 builder.Services.RegisterServices();
-builder.Services.AddRazorPages();
-
+builder.Services.AddRazorPages(options => { options.Conventions.AuthorizeAreaFolder("Admin", "/", "AdminOnly"); });
+builder.Services.AddSignalR();
 var app = builder.Build();
 var scopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
 using var scope = scopeFactory.CreateScope();
@@ -43,5 +44,5 @@ app.UseAuthorization();
 
 
 app.MapRazorPages();
-
+app.MapHub<SignalRHub>("/signalr");
 app.Run();

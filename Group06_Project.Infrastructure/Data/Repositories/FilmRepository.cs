@@ -103,4 +103,21 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
             .Include(f => f.Country)
             .FirstOrDefault(f => f.Id == id);
     }
+
+    public Task ToggleFavoriteFilm(string userId, int filmId)
+    {
+        var film = DbSet.Include(f => f.Followers).FirstOrDefault(f => f.Id == filmId);
+        var user = DbContext.Users.FirstOrDefault(u => u.Id == userId)!;
+        if (film!.Followers.Any(u => u.Id == userId))
+            film.Followers.Remove(user);
+        else
+            film.Followers.Add(user);
+        DbSet.Update(film);
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> IsFavoriteFilm(int existFilmId, string userId)
+    {
+        return DbSet.AnyAsync(f => f.Id == existFilmId && f.Followers.Any(u => u.Id == userId));
+    }
 }

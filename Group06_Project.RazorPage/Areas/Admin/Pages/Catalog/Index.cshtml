@@ -55,21 +55,16 @@
                     <div class="filter" id="filter__sort">
                         <span class="filter__item-label">Sort by:</span>
 
-                        <div class="filter__item-btn dropdown-toggle" role="navigation" id="filter-sort"
-                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <input type="button" value="@Model.SortOptions.FirstOrDefault(s => s.Value == Model.Sort)?.Text">
+                        <div class="filter__item-btn dropdown-toggle" role="navigation" id="filter-sort" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <input type="button" value="@(Model.SortOptions.FirstOrDefault(s => s.Value == Model.Sort)?.Text ?? Model.SortOptions.First().Text)">
                             <span></span>
                         </div>
 
                         <ul class="filter__item-menu dropdown-menu scrollbar-dropdown" aria-labelledby="filter-sort">
-                            @foreach (var sortOption in Model.SortOptions)
+                            @foreach (var item in Model.SortOptions)
                             {
-                                <li>
-                                    <a asp-page-handler="Sort"
-                                       asp-route-sort="@sortOption.Value"
-                                       asp-route-search="@Model.Search">
-                                        @sortOption.Text
-                                    </a>
+                                <li data-value="@item.Value" onclick="location.href='@Url.Page("./Index", new { Sort = item.Value, Search = ViewData["Search"] })'">
+                                    @item.Text
                                 </li>
                             }
                         </ul>
@@ -115,7 +110,7 @@
                         <tr>
                             <td>
                                 <div class="main__table-text">
-                                    <a asp-page="/Film/Details" asp-route-id="@filmItem.Id">@filmItem.Title</a>
+                                    <a asp-page="/Film/Detail" asp-area="" asp-route-id="@filmItem.Id">@filmItem.Title</a>
                                 </div>
                             </td>
                             <td>
@@ -133,11 +128,6 @@
                                     <a asp-page="./Update" asp-route-id="@filmItem.Id" class="main__table-btn main__table-btn--edit">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                             <path d="M22,7.24a1,1,0,0,0-.29-.71L17.47,2.29A1,1,0,0,0,16.76,2a1,1,0,0,0-.71.29L13.22,5.12h0L2.29,16.05a1,1,0,0,0-.29.71V21a1,1,0,0,0,1,1H7.24A1,1,0,0,0,8,21.71L18.87,10.78h0L21.71,8a1.19,1.19,0,0,0,.22-.33,1,1,0,0,0,0-.24.7.7,0,0,0,0-.14ZM6.83,20H4V17.17l9.93-9.93,2.83,2.83ZM18.17,8.66,15.34,5.83l1.42-1.41,2.82,2.82Z"/>
-                                        </svg>
-                                    </a>
-                                    <a class="main__table-btn main__table-btn--view">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                            <path d="M21.92,11.6C19.9,6.91,16.1,4,12,4S4.1,6.91,2.08,11.6a1,1,0,0,0,0,.8C4.1,16.09,7.9,19,12,19s7.9-2.91,9.92-7.6A1,1,0,0,0,21.92,11.6ZM12,17a5,5,0,1,1,5-5A5,5,0,0,1,12,17ZM9,7A3,3,0,0,0,6,10a3,3,0,0,0,3,3,3,3,0,0,0,3-3A3,3,0,0,0,9,7Zm6,0a3,3,0,0,0-3,3,3,3,0,0,0,3,3,3,3,0,0,0,3-3A3,3,0,0,0,15,7Z"/>
                                         </svg>
                                     </a>
                                     <a asp-page="./Delete" asp-route-id="@filmItem.Id" class="main__table-btn main__table-btn--delete">
@@ -191,7 +181,7 @@
                     @if (startPage > 2)
                     {
                         <li>
-                            <span>...</span>
+                            <a style="color: #e0e0e0;">...</a>
                         </li>
                     }
                     @for (var i = startPage; i <= endPage; i++)
@@ -210,7 +200,7 @@
                     @if (endPage < totalPages - 1)
                     {
                         <li>
-                            <span>...</span>
+                            <a style="color: #e0e0e0;">...</a>
                         </li>
                     }
                     @if (endPage < totalPages)
