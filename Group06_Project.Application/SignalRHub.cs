@@ -6,7 +6,6 @@ public class SignalRHub : Hub
 {
     public async Task JoinFilmGroup(int filmId)
     {
-        Console.WriteLine("-----------------------------------Joining group");
         await Groups.AddToGroupAsync(Context.ConnectionId, filmId.ToString());
     }
 

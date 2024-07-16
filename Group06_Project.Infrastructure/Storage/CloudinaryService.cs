@@ -61,7 +61,7 @@ public class CloudinaryService : IStorageService
         var url = _cloudinary.Api.UrlImgUp.BuildUrl(fileId);
         return Task.FromResult(url);
     }
-    public Task<string> GetVideoUrl(string fileId)
+    public Task<string> GetVideoUrl(string? fileId)
     {
         var url = _cloudinary.Api.UrlVideoUp.BuildUrl(fileId);
         return Task.FromResult(url);

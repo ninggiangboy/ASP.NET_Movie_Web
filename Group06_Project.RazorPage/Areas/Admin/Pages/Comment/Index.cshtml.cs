@@ -37,7 +37,6 @@ public class CommentModel : PageModel
 
     public IActionResult OnPostDelete(int commentId, int? pageNumber)
     {
-        Console.WriteLine("====================================");
         _commentService.RemoveComment(commentId);
         return RedirectToPage(new { PageNo = pageNumber });
     }

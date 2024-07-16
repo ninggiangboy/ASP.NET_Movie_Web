@@ -4,6 +4,7 @@ using Group06_Project.Domain.Enums;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using NuGet.Packaging;
 
 namespace Group06_Project.Application.Services;
@@ -11,13 +12,15 @@ namespace Group06_Project.Application.Services;
 public class FilmService : IFilmService
 {
     private const int HomeFilmListSize = 18;
+    private readonly IDistributedCache _cache;
     private readonly IStorageService _storageService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public FilmService(IUnitOfWork unitOfWork, IStorageService storageService)
+    public FilmService(IUnitOfWork unitOfWork, IStorageService storageService, IDistributedCache cache)
     {
         _unitOfWork = unitOfWork;
         _storageService = storageService;
+        _cache = cache;
     }
 
     public Page<FilmItemList> GetLatestFilm()
@@ -55,12 +58,29 @@ public class FilmService : IFilmService
             && (!genre.HasValue || f.Genres.Any(g => g.Id == genre))
             && (!country.HasValue || f.CountryId == country)
             && (!type.HasValue || f.Type == type);
-        return _unitOfWork.Films.GetFilmList(pageRequest, predicate);
+        var films = _unitOfWork.Films.GetFilmList(pageRequest, predicate);
+        foreach (var film in films.Data)
+        {
+             film.PosterUrl = _storageService.GetImageUrl(film.PosterUrl).Result;
+        }
+        return films;
     }
 
-    public Task<FilmItemDetail?> GetFilmDetail(int id)
+    public async Task<FilmItemDetail?> GetFilmDetail(int id)
     {
-        return _unitOfWork.Films.GetFilmDetail(id);
+        var key = $"view_film_{id}";
+        var view = await _cache.GetStringAsync(key) ?? "0";
+        var viewCount = int.Parse(view);
+        await _cache.SetStringAsync(key, (viewCount + 1).ToString());
+        var film =  await _unitOfWork.Films.GetFilmDetail(id);
+        if (film != null)
+        {
+            film.VideoUrl = film.VideoUrl != null ? await _storageService.GetVideoUrl(film.VideoUrl) : "";
+            film.PosterUrl = film.PosterUrl != null ? await _storageService.GetImageUrl(film.PosterUrl) : "";
+            film.TrailerUrl = film.TrailerUrl != null ? await _storageService.GetImageUrl(film.TrailerUrl) : "";
+            film.ThumbnailUrl = film.ThumbnailUrl != null ? await _storageService.GetImageUrl(film.ThumbnailUrl) : "";
+        }
+        return film;
     }
 
     public async Task<FilmItemCreate> AddFilm(FilmItemCreate film)
@@ -271,6 +291,11 @@ public class FilmService : IFilmService
             Size = HomeFilmListSize,
             Sort = criteria
         };
-        return _unitOfWork.Films.GetFilmList(pageRequest, null);
+        var films = _unitOfWork.Films.GetFilmList(pageRequest, null);
+        foreach (var film in films.Data)
+        {
+             film.PosterUrl = _storageService.GetImageUrl(film.PosterUrl).Result;
+        }
+        return films;
     }
 }
