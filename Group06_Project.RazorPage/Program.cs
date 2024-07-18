@@ -1,4 +1,5 @@
 using Group06_Project.Application;
+using Group06_Project.Application.RealTime;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Infrastructure.Configurations;
 using Group06_Project.Infrastructure.Data;

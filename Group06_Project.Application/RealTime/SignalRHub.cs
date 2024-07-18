@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 
-namespace Group06_Project.Application;
+namespace Group06_Project.Application.RealTime;
 
 public class SignalRHub : Hub
 {

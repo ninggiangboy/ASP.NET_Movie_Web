@@ -1,23 +1,17 @@
-﻿using Group06_Project.Domain.Interfaces.Services;
-using Group06_Project.Domain.Interfaces;
-using Group06_Project.Domain.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Group06_Project.Domain.Interfaces.Repositories;
+﻿using System.Linq.Expressions;
 using Group06_Project.Domain.Entities;
-using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+using Group06_Project.Domain.Interfaces;
+using Group06_Project.Domain.Interfaces.Repositories;
+using Group06_Project.Domain.Interfaces.Services;
+using Group06_Project.Domain.Models;
 
 namespace Group06_Project.Application.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IUserRepository _userRepository;
+
     public UserService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
@@ -36,17 +30,14 @@ public class UserService : IUserService
             string.IsNullOrEmpty(search)
             || u.UserName.Contains(search)
             || u.Email.Contains(search);
-
-        return _userRepository.GetUserList(pageRequest, search, pageNo);
+        // x => x.RoleName != "Admin" || x.RoleName == null
+        return _userRepository.GetUserList(pageRequest, predicate, search, pageNo);
     }
 
     public bool DisableUserLockout(string userId)
     {
         var user = _userRepository.GetById(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        if (user == null) return false;
 
         user.LockoutEnabled = false;
         _userRepository.DisableUserLockout(user);
@@ -56,10 +47,7 @@ public class UserService : IUserService
     public bool EnableUserLockout(string userId)
     {
         var user = _userRepository.GetById(userId);
-        if (user == null)
-        {
-            return false;
-        }
+        if (user == null) return false;
 
         user.LockoutEnabled = true;
         _userRepository.EnableUserLockout(user);

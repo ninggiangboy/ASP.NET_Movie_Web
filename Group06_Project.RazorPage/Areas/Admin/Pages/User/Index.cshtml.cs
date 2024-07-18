@@ -20,7 +20,6 @@ public class IndexModel : PageModel
 
     public void OnGet()
     {
-        Console.WriteLine(_userService.GetUserList(Search, PageNo));
         Users = _userService.GetUserList(Search, PageNo);
     }
 
