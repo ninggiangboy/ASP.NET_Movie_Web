@@ -4,19 +4,20 @@ using Group06_Project.Domain.Enums;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
-using Microsoft.Extensions.Caching.Distributed;
 using NuGet.Packaging;
+using StackExchange.Redis;
 
 namespace Group06_Project.Application.Services;
 
 public class FilmService : IFilmService
 {
     private const int HomeFilmListSize = 18;
-    private readonly IDistributedCache _cache;
+    private const int DashboardFilmListSize = 30;
+    private readonly IDatabase _cache;
     private readonly IStorageService _storageService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public FilmService(IUnitOfWork unitOfWork, IStorageService storageService, IDistributedCache cache)
+    public FilmService(IUnitOfWork unitOfWork, IStorageService storageService, IDatabase cache)
     {
         _unitOfWork = unitOfWork;
         _storageService = storageService;
@@ -48,31 +49,29 @@ public class FilmService : IFilmService
             Sort = sort
         };
         Expression<Func<Film, bool>> predicate = f =>
-            (
-                string.IsNullOrEmpty(search)
-                || f.Title.Contains(search)
-                || (!string.IsNullOrEmpty(f.OtherTitle) && f.OtherTitle.Contains(search))
-                || (!string.IsNullOrEmpty(f.Actor) && f.Actor.Contains(search))
-                || (!string.IsNullOrEmpty(f.Director) && f.Director.Contains(search))
-            )
-            && (!genre.HasValue || f.Genres.Any(g => g.Id == genre))
-            && (!country.HasValue || f.CountryId == country)
-            && (!type.HasValue || f.Type == type);
+                (
+                    string.IsNullOrEmpty(search)
+                    || f.Title.Contains(search)
+                    || (!string.IsNullOrEmpty(f.OtherTitle) && f.OtherTitle.Contains(search))
+                    || (!string.IsNullOrEmpty(f.Actor) && f.Actor.Contains(search))
+                    || (!string.IsNullOrEmpty(f.Director) && f.Director.Contains(search))
+                )
+                && (!genre.HasValue || f.Genres.Any(g => g.Id == genre))
+                && (!country.HasValue || f.CountryId == country)
+                && f.IsVisible == true
+            ;
         var films = _unitOfWork.Films.GetFilmList(pageRequest, predicate);
-        foreach (var film in films.Data)
-        {
-             film.PosterUrl = _storageService.GetImageUrl(film.PosterUrl).Result;
-        }
+        foreach (var film in films.Data) film.PosterUrl = _storageService.GetImageUrl(film.PosterUrl).Result;
         return films;
     }
 
     public async Task<FilmItemDetail?> GetFilmDetail(int id)
     {
         var key = $"view_film_{id}";
-        var view = await _cache.GetStringAsync(key) ?? "0";
-        var viewCount = int.Parse(view);
-        await _cache.SetStringAsync(key, (viewCount + 1).ToString());
-        var film =  await _unitOfWork.Films.GetFilmDetail(id);
+        var view = await _cache.StringGetAsync(key);
+        var viewCount = int.Parse(view.HasValue ? view.ToString() : "0");
+        await _cache.StringSetAsync(key, (viewCount + 1).ToString());
+        var film = await _unitOfWork.Films.GetFilmDetail(id);
         if (film != null)
         {
             film.VideoUrl = film.VideoUrl != null ? await _storageService.GetVideoUrl(film.VideoUrl) : "";
@@ -80,6 +79,7 @@ public class FilmService : IFilmService
             film.TrailerUrl = film.TrailerUrl != null ? await _storageService.GetImageUrl(film.TrailerUrl) : "";
             film.ThumbnailUrl = film.ThumbnailUrl != null ? await _storageService.GetImageUrl(film.ThumbnailUrl) : "";
         }
+
         return film;
     }
 
@@ -108,9 +108,6 @@ public class FilmService : IFilmService
             PosterUrl = posterUrl,
             Duration = film.Duration,
             AverageRating = film.AverageRating,
-            TotalEpisode = film.TotalEpisode,
-            DurationPerEpisode = film.DurationPerEpisode,
-            Type = film.Type,
             Actor = film.Actor,
             Director = film.Director,
             TotalView = film.TotalView ?? 0,
@@ -192,12 +189,8 @@ public class FilmService : IFilmService
             currentFilm.PosterUrl = posterUrl;
             currentFilm.Duration = film.Duration;
             currentFilm.AverageRating = film.AverageRating;
-            currentFilm.TotalEpisode = film.TotalEpisode;
-            currentFilm.DurationPerEpisode = film.DurationPerEpisode;
-            currentFilm.Type = film.Type;
             currentFilm.Actor = film.Actor;
             currentFilm.Director = film.Director;
-            currentFilm.TotalView = film.TotalView ?? 0;
             currentFilm.ReleaseYear = film.ReleaseYear;
             currentFilm.CountryId = film.CountryId;
             currentFilm.Genres.AddRange(filmGenre);
@@ -266,7 +259,6 @@ public class FilmService : IFilmService
                 AverageRating = film.AverageRating,
                 TotalEpisode = film.TotalEpisode,
                 DurationPerEpisode = film.DurationPerEpisode,
-                Type = film.Type,
                 Actor = film.Actor,
                 Director = film.Director,
                 TotalView = film.TotalView,
@@ -283,6 +275,47 @@ public class FilmService : IFilmService
         }
     }
 
+    public void AddView(int filmId, int viewCount)
+    {
+        _unitOfWork.Films.AddView(filmId, viewCount);
+        _unitOfWork.Commit();
+    }
+
+    public Task<IEnumerable<FilmListExport>> GetAllFilmList()
+    {
+        return _unitOfWork.Films.GetAllFilmList();
+    }
+
+    public async Task ToggleVisibleFilm(int id)
+    {
+        await _unitOfWork.Films.ToggleVisibleFilm(id);
+        await _unitOfWork.CommitAsync();
+    }
+
+    public Page<FilmItemList> GetFilmListDashboard(string? search, int? genre, int? country, FilmType? type,
+        string? sort, int? pageNo)
+    {
+        var pageRequest = new PageRequest<Film>
+        {
+            PageNumber = pageNo ?? 1,
+            Size = DashboardFilmListSize,
+            Sort = sort
+        };
+        Expression<Func<Film, bool>> predicate = f =>
+            (
+                string.IsNullOrEmpty(search)
+                || f.Title.Contains(search)
+                || (!string.IsNullOrEmpty(f.OtherTitle) && f.OtherTitle.Contains(search))
+                || (!string.IsNullOrEmpty(f.Actor) && f.Actor.Contains(search))
+                || (!string.IsNullOrEmpty(f.Director) && f.Director.Contains(search))
+            )
+            && (!genre.HasValue || f.Genres.Any(g => g.Id == genre))
+            && (!country.HasValue || f.CountryId == country);
+        var films = _unitOfWork.Films.GetFilmList(pageRequest, predicate);
+        foreach (var film in films.Data) film.PosterUrl = _storageService.GetImageUrl(film.PosterUrl).Result;
+        return films;
+    }
+
     private Page<FilmItemList> GetHomeFilmList(string criteria)
     {
         var pageRequest = new PageRequest<Film>
@@ -291,11 +324,9 @@ public class FilmService : IFilmService
             Size = HomeFilmListSize,
             Sort = criteria
         };
-        var films = _unitOfWork.Films.GetFilmList(pageRequest, null);
-        foreach (var film in films.Data)
-        {
-             film.PosterUrl = _storageService.GetImageUrl(film.PosterUrl).Result;
-        }
+        Expression<Func<Film, bool>> predicate = f => f.IsVisible == true;
+        var films = _unitOfWork.Films.GetFilmList(pageRequest, predicate);
+        foreach (var film in films.Data) film.PosterUrl = _storageService.GetImageUrl(film.PosterUrl).Result;
         return films;
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Interfaces.Repositories;
 using Group06_Project.Domain.Models;
@@ -19,12 +18,13 @@ public class UserRepository : RepositoryBase<User, string>, IUserRepository
         return DbSet.Include(u => u.FavoriteFilms).FirstOrDefault(u => u.Id == userId);
     }
 
-    public Page<UserList> GetUserList(PageRequest<User> pageRequest, Expression<Func<User, bool>> expression,
+    public Page<UserList> GetUserList(PageRequest<User> pageRequest, Expression<Func<User, bool>>? expression,
         string? search, int? page)
     {
         var skip = (pageRequest.PageNumber - 1) * pageRequest.Size;
         var rawData = DbSet
             .Include(u => u.Comments)
+            .Where(expression ?? (_ => true))
             .GroupJoin(
                 DbContext.Set<IdentityUserRole<string>>(),
                 user => user.Id,
@@ -41,8 +41,7 @@ public class UserRepository : RepositoryBase<User, string>, IUserRepository
             .SelectMany(
                 x => x.Roles.DefaultIfEmpty(),
                 (x, role) => new { x.User, RoleName = role != null ? role.Name : null })
-            .Where(x => x.RoleName != "Admin" || x.RoleName == null)
-            .Where(expression);
+            .Where(x => x.RoleName != "Admin" || x.RoleName == null);
         var totalElement = rawData.Count();
         var data = rawData
             //.OrderBy(pageRequest.Sort ?? "Id desc")
@@ -50,6 +49,7 @@ public class UserRepository : RepositoryBase<User, string>, IUserRepository
             .Select(u => new UserList
             {
                 Id = u.User.Id,
+                Balance = u.User.Balance,
                 UserName = u.User.UserName,
                 Email = u.User.Email,
                 PhoneNumber = u.User.PhoneNumber,

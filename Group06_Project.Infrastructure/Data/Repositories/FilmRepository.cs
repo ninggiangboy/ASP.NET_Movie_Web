@@ -46,27 +46,9 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
 
     public ICollection<FilmItemList> GetFavoriteFilms(string userId)
     {
-        // return DbContext.Users
-        //     .Include(u => u.FavoriteFilms)
-        //     .ThenInclude(f => f.Genres)
-        //     .FirstOrDefault(u => u.Id == userId)?.FavoriteFilms
-        //     .Select(f => new FilmItemList
-        //     {
-        //         Id = f.Id,
-        //         Title = f.Title,
-        //         PosterUrl = f.PosterUrl ?? "",
-        //         AverageRating = f.AverageRating ?? 0,
-        //         TotalView = f.TotalView,
-        //         Genres = f.Genres.Select(g => new SelectOption
-        //         {
-        //             Value = g.Id,
-        //             Label = g.Name
-        //         })
-        //     }).ToList() ?? new List<FilmItemList>();
-        // rewrite
         return DbSet
             .Include(f => f.Genres)
-            .Where(f => f.Followers.Any(u => u.Id == userId))
+            .Where(f => f.Followers.Any(u => u.Id == userId) && f.IsVisible)
             .ProjectTo<FilmItemList>(_mapper)
             .ToList();
     }
@@ -86,7 +68,6 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
         return DbSet
             .Include(f => f.Genres)
             .Include(f => f.Country)
-            .Include(f => f.Episodes)
             .Where(f => f.Id == id)
             .ProjectTo<FilmItemDetail>(_mapper)
             .FirstOrDefaultAsync();
@@ -119,5 +100,29 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
     public Task<bool> IsFavoriteFilm(int existFilmId, string userId)
     {
         return DbSet.AnyAsync(f => f.Id == existFilmId && f.Followers.Any(u => u.Id == userId));
+    }
+
+    public void AddView(int filmId, int viewCount)
+    {
+        var film = DbSet.Find(filmId) ?? throw new Exception("Film not found");
+        film.TotalView += viewCount;
+        DbSet.Update(film);
+    }
+
+    public async Task<IEnumerable<FilmListExport>> GetAllFilmList()
+    {
+        return await DbSet
+            .Include(f => f.Genres)
+            .Include(f => f.Country)
+            .ProjectTo<FilmListExport>(_mapper)
+            .ToListAsync();
+    }
+
+    public Task ToggleVisibleFilm(int id)
+    {
+        var film = DbSet.Find(id) ?? throw new Exception("Film not found");
+        film.IsVisible = !film.IsVisible;
+        DbSet.Update(film);
+        return Task.CompletedTask;
     }
 }

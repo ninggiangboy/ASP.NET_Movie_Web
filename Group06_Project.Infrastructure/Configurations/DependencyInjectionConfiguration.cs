@@ -1,3 +1,4 @@
+using Group06_Project.Application.Background;
 using Group06_Project.Application.Services;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Repositories;
@@ -18,13 +19,13 @@ public static class DependencyInjectionConfiguration
     {
         services.RegisterData();
         services.RegisterApplicationServices();
+        services.RegisterBackgroundServices();
     }
 
     private static void RegisterData(this IServiceCollection services)
     {
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<ICountryRepository, CountryRepository>();
-        services.AddScoped<IEpisodeRepository, EpisodeRepository>();
         services.AddScoped<IFilmRepository, FilmRepository>();
         services.AddScoped<IGenreRepository, GenreRepository>();
         services.AddScoped<IRatingRepository, RatingRepository>();
@@ -46,5 +47,10 @@ public static class DependencyInjectionConfiguration
         services.AddScoped<IFavoriteService, FavoriteService>();
         services.AddScoped<IBalanceService, BalanceService>();
         services.AddScoped<IUserService, UserService>();
+    }
+
+    private static void RegisterBackgroundServices(this IServiceCollection services)
+    {
+        services.AddHostedService<AddViewBackground>();
     }
 }

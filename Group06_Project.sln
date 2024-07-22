@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.Application
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.Infrastructure", "Group06_Project.Infrastructure\Group06_Project.Infrastructure.csproj", "{7935383A-4068-4ADF-9601-A2BB5E0E00E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.RazorPage", "Group06_Project.RazorPage\Group06_Project.RazorPage.csproj", "{B985B253-2D40-4F52-80E1-8CAFAEB38A09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Group06_Project.Web", "Group06_Project.Web\Group06_Project.Web.csproj", "{B985B253-2D40-4F52-80E1-8CAFAEB38A09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

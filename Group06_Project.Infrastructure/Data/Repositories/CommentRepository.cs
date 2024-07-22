@@ -23,7 +23,7 @@ public class CommentRepository : RepositoryBase<Comment, int>, ICommentRepositor
         DbSet.Remove(comment);
     }
 
-    public Page<CommentItem> GetByFilmId(int filmId, PageRequest<Comment> pageRequest)
+    public async Task<Page<CommentItem>> GetByFilmId(int filmId, PageRequest<Comment> pageRequest)
     {
         var rawData = DbSet
             .Include(c => c.User)
@@ -43,7 +43,7 @@ public class CommentRepository : RepositoryBase<Comment, int>, ICommentRepositor
             PageNumber = pageRequest.PageNumber,
             PageSize = pageRequest.Size,
             TotalElement = total,
-            Data = total == 0 ? new List<CommentItem>() : data.ToList(),
+            Data = total == 0 ? new List<CommentItem>() : await data.ToListAsync(),
             Sort = pageRequest.Sort
         };
     }

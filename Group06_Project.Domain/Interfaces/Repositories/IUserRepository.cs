@@ -8,7 +8,7 @@ public interface IUserRepository : IRepositoryBase<User, string>
 {
     User GetByIdWithFavoriteFilms(string userId);
 
-    Page<UserList> GetUserList(PageRequest<User> pageRequest, Expression<Func<User, bool>> expression, string? search,
+    Page<UserList> GetUserList(PageRequest<User> pageRequest, Expression<Func<User, bool>>? expression, string? search,
         int? page);
 
     void DisableUserLockout(User user);

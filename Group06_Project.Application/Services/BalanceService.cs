@@ -1,16 +1,13 @@
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Enums;
 using Group06_Project.Domain.Interfaces;
-using Group06_Project.Domain.Interfaces.Repositories;
 using Group06_Project.Domain.Interfaces.Services;
 using Group06_Project.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Group06_Project.Application.Services;
 
 public class BalanceService : IBalanceService
 {
-    // private const decimal PointToVnd = 1_000;
     private readonly IUnitOfWork _unitOfWork;
 
     public BalanceService(IUnitOfWork unitOfWork)
@@ -20,12 +17,12 @@ public class BalanceService : IBalanceService
 
     public async Task<TransactionModel> CreateTransactionAsync(decimal amountPoint, TransactionType type, string userId)
     {
-        var transactionReference = await  GenerateTransactionIdAsync();
-        var info =  await GenerateMessageInfoAsync(type);
+        var transactionReference = await GenerateTransactionIdAsync();
+        var info = await GenerateMessageInfoAsync(type);
         await _unitOfWork.Transactions.AddAsync(new Transaction
         {
-            TransactionReference =  transactionReference,
-            Description =  info,
+            TransactionReference = transactionReference,
+            Description = info,
             Amount = amountPoint,
             UserId = userId,
             Type = type,
@@ -35,23 +32,33 @@ public class BalanceService : IBalanceService
         return new TransactionModel
         {
             TransactionReference = transactionReference,
-            Info =  info,
-            Amount = amountPoint,
+            Info = info,
+            Amount = amountPoint
         };
     }
 
     public async Task ConfirmTransactionAsync(string transactionReference)
     {
-        var transaction =  await _unitOfWork.Transactions.GetByTransactionReference(transactionReference) 
-            ?? throw new ArgumentException("Not found transaction");
-        if (transaction.Status != TransactionStatus.Pending)
+        var transaction = await _unitOfWork.Transactions.GetByTransactionReference(transactionReference)
+                          ?? throw new ArgumentException("Not found transaction");
+        if (transaction.Status != TransactionStatus.Pending) throw new ArgumentException("Transaction is not pending");
+        if (transaction.Type == TransactionType.Purchase && transaction.User.Balance + transaction.Amount < 0)
         {
-            throw new ArgumentException("Transaction is not pending");
+            transaction.Status = TransactionStatus.Failed;
+            await _unitOfWork.Transactions.UpdateAsync(transaction);
+            await _unitOfWork.CommitAsync();
+            throw new ArgumentException("Not enough balance");
         }
         transaction.Status = TransactionStatus.Success;
         transaction.User.Balance += transaction.Amount;
         await _unitOfWork.Transactions.UpdateAsync(transaction);
         await _unitOfWork.CommitAsync();
+    }
+
+    public async Task PurchaseAsync(decimal amountPoint, string userId)
+    {
+        var trans = await CreateTransactionAsync(-amountPoint, TransactionType.Purchase, userId);
+        await ConfirmTransactionAsync(trans.TransactionReference);
     }
 
     private Task<string> GenerateTransactionIdAsync()
@@ -62,7 +69,7 @@ public class BalanceService : IBalanceService
         var id = $"{dateTime}{hash}";
         return Task.FromResult(id);
     }
-    
+
     private Task<string> GenerateMessageInfoAsync(TransactionType type)
     {
         return Task.FromResult(type switch

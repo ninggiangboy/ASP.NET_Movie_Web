@@ -16,4 +16,7 @@ public interface IFilmRepository : IRepositoryBase<Film, int>
     Film GetFilmByIdWithGenresAndCountry(int id);
     Task ToggleFavoriteFilm(string userId, int filmId);
     Task<bool> IsFavoriteFilm(int existFilmId, string userId);
+    void AddView(int filmId, int viewCount);
+    Task<IEnumerable<FilmListExport>> GetAllFilmList();
+    Task ToggleVisibleFilm(int id);
 }

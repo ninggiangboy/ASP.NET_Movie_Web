@@ -8,14 +8,13 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     private readonly ApplicationDbContext _dbContext;
 
     public UnitOfWork(ApplicationDbContext appDbContext, ICountryRepository countryRepository,
-        ICommentRepository commentRepository, IEpisodeRepository episodeRepository, IGenreRepository genreRepository,
+        ICommentRepository commentRepository, IGenreRepository genreRepository,
         IFilmRepository filmRepository, IRatingRepository ratingRepository, IUserRepository userRepository,
         ITransactionRepository transactionRepository)
     {
         _dbContext = appDbContext;
         Countries = countryRepository;
         Comments = commentRepository;
-        Episodes = episodeRepository;
         Genres = genreRepository;
         Films = filmRepository;
         Ratings = ratingRepository;
@@ -29,7 +28,6 @@ public class UnitOfWork : IUnitOfWork, IAsyncDisposable
 
     public ICommentRepository Comments { get; }
     public ICountryRepository Countries { get; }
-    public IEpisodeRepository Episodes { get; }
     public IGenreRepository Genres { get; }
     public IFilmRepository Films { get; }
     public IRatingRepository Ratings { get; }

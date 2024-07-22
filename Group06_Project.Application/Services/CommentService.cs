@@ -35,7 +35,7 @@ public class CommentService : ICommentService
         _unitOfWork.Commit();
     }
 
-    public Page<CommentItem> GetCommentsByFilmId(int filmId, int commentPageNo)
+    public async Task<Page<CommentItem>> GetCommentsByFilmId(int filmId, int commentPageNo)
     {
         var pageRequest = new PageRequest<Comment>
         {
@@ -43,7 +43,7 @@ public class CommentService : ICommentService
             Size = CommentPageSize,
             Sort = "Time Desc"
         };
-        return _unitOfWork.Comments.GetByFilmId(filmId, pageRequest);
+        return await _unitOfWork.Comments.GetByFilmId(filmId, pageRequest);
     }
 
     public Page<CommentList> GetAllComments(int? page, string? sort, string? userId, int? filmId)

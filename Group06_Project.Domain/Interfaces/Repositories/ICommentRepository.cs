@@ -8,5 +8,5 @@ public interface ICommentRepository : IRepositoryBase<Comment, int>
 {
     void RemoveById(int commentId);
     public Page<CommentList> GetAllBy(PageRequest<Comment> commentPageNo, Expression<Func<Comment, bool>>? predicate);
-    Page<CommentItem> GetByFilmId(int filmId, PageRequest<Comment> pageRequest);
+    Task<Page<CommentItem>> GetByFilmId(int filmId, PageRequest<Comment> pageRequest);
 }

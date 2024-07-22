@@ -6,6 +6,6 @@ public interface ICommentService
 {
     Task AddCommentToFilm(int filmId, string commentText, string userId);
     void RemoveComment(int commentId);
-    Page<CommentItem> GetCommentsByFilmId(int filmId, int commentPageNo);
+    Task<Page<CommentItem>> GetCommentsByFilmId(int filmId, int commentPageNo);
     Page<CommentList> GetAllComments(int? page, string? sort, string? userId, int? filmId);
 }

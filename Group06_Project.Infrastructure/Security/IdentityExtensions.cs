@@ -14,6 +14,7 @@ public static class IdentityExtensions
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.User.RequireUniqueEmail = true;
+                options.Lockout.AllowedForNewUsers = true;
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();

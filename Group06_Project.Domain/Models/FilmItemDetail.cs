@@ -1,5 +1,3 @@
-using Group06_Project.Domain.Enums;
-
 namespace Group06_Project.Domain.Models;
 
 public class FilmItemDetail
@@ -16,7 +14,6 @@ public class FilmItemDetail
     public decimal? AverageRating { get; set; }
     public int? TotalEpisode { get; set; }
     public int? DurationPerEpisode { get; set; }
-    public FilmType Type { get; set; }
     public string? Actor { get; set; }
     public string? Director { get; set; }
     public int TotalView { get; set; } = 0;

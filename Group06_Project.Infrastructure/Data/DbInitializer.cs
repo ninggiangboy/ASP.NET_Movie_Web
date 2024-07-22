@@ -43,15 +43,13 @@ public class DbInitializer : IDbInitializer
             .RuleFor(f => f.ThumbnailUrl, f => f.Image.PicsumUrl())
             .RuleFor(f => f.Duration, f => f.Random.Number(60, 180))
             .RuleFor(f => f.AverageRating, f => f.Random.Decimal(1, 5))
-            .RuleFor(f => f.TotalEpisode, f => f.Random.Number(1, 10))
-            .RuleFor(f => f.DurationPerEpisode, f => f.Random.Number(20, 60))
             .RuleFor(f => f.VideoUrl, f => "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-1080p.mp4")
-            .RuleFor(f => f.Type, f => f.PickRandom<FilmType>())
             .RuleFor(f => f.Actor, f => f.Person.FullName)
             .RuleFor(f => f.Director, f => f.Person.FullName)
             .RuleFor(f => f.TotalView, f => f.Random.Number(100, 1000))
             .RuleFor(f => f.ReleaseYear, f => f.Random.Number(2000, 2023))
-            .RuleFor(f => f.CountryId, f => f.Random.Number(1, 5));
+            .RuleFor(f => f.CountryId, f => f.Random.Number(1, 5))
+            .RuleFor(f => f.IsVisible, f => f.Random.Bool());
         var films = faker.Generate(1000);
         var genres = _unitOfWork.Genres.GetAll().ToList();
         foreach (var film in films)
