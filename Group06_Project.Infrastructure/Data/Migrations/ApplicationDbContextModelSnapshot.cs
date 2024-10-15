@@ -110,51 +110,6 @@ namespace Group06_Project.Infrastructure.Data.Migrations
                     b.ToTable("Countries");
                 });
 
-            modelBuilder.Entity("Group06_Project.Domain.Entities.Episode", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ThumbnailUrl")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .IsUnicode(true)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("VideoUrl")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("View")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MovieId");
-
-                    b.ToTable("Episodes");
-                });
-
             modelBuilder.Entity("Group06_Project.Domain.Entities.Film", b =>
                 {
                     b.Property<int>("Id")
@@ -189,8 +144,8 @@ namespace Group06_Project.Infrastructure.Data.Migrations
                     b.Property<int?>("Duration")
                         .HasColumnType("int");
 
-                    b.Property<int?>("DurationPerEpisode")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("bit");
 
                     b.Property<string>("OtherTitle")
                         .HasMaxLength(100)
@@ -214,18 +169,12 @@ namespace Group06_Project.Infrastructure.Data.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("TotalEpisode")
-                        .HasColumnType("int");
-
                     b.Property<int>("TotalView")
                         .HasColumnType("int");
 
                     b.Property<string>("TrailerUrl")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
 
                     b.Property<string>("VideoUrl")
                         .HasMaxLength(255)
@@ -585,17 +534,6 @@ namespace Group06_Project.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Group06_Project.Domain.Entities.Episode", b =>
-                {
-                    b.HasOne("Group06_Project.Domain.Entities.Film", "Movie")
-                        .WithMany("Episodes")
-                        .HasForeignKey("MovieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Movie");
-                });
-
             modelBuilder.Entity("Group06_Project.Domain.Entities.Film", b =>
                 {
                     b.HasOne("Group06_Project.Domain.Entities.Country", "Country")
@@ -694,8 +632,6 @@ namespace Group06_Project.Infrastructure.Data.Migrations
             modelBuilder.Entity("Group06_Project.Domain.Entities.Film", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("Episodes");
 
                     b.Navigation("Ratings");
                 });

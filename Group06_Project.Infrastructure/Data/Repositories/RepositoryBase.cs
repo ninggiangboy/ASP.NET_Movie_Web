@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using Group06_Project.Domain.Interfaces.Repositories;
 using Group06_Project.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Group06_Project.Infrastructure.Data.Repositories;
 
@@ -17,9 +18,9 @@ public class RepositoryBase<T, TId> : IRepositoryBase<T, TId> where T : class
         DbSet = appDbContext.Set<T>();
     }
 
-    public void Add(T entity)
+    public EntityEntry<T> Add(T entity)
     {
-        DbSet.Add(entity);
+        return DbSet.Add(entity);
     }
 
     public void AddAll(IEnumerable<T> entities)

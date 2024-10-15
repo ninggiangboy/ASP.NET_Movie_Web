@@ -9,12 +9,13 @@ namespace Group06_Project.Infrastructure.Payment;
 
 public class VnPayService : IPaymentService
 {
+    private const int VnPayAmountMultiplier = 100;
+    private const int PointMultiplier = 1_000;
     private readonly string _hashSecret;
     private readonly string _returnUrl;
     private readonly string _tmnCode;
     private readonly string _url;
-    private const int VnPayAmountMultiplier = 100;
-    private const int PointMultiplier = 1_000;
+
     public VnPayService(IConfiguration configuration)
     {
         _hashSecret = configuration["VnPay:HashSecret"];
@@ -26,13 +27,14 @@ public class VnPayService : IPaymentService
     public Task<string> CreatePaymentUrl(TransactionModel transaction)
     {
         var hostName = Dns.GetHostName();
-        var clientIpAddress = Dns.GetHostAddresses(hostName).GetValue(0)?.ToString() ?? "";
-        
+        var clientIpAddress = Dns.GetHostAddresses(hostName)
+            .GetValue(0)?.ToString() ?? "";
+        var amount = transaction.Amount * VnPayAmountMultiplier * PointMultiplier;
         var paymentUrl = VnPayUtil.BuilderUrl(_url, _hashSecret)
             .RequestData("vnp_Version", "2.1.0")
             .RequestData("vnp_Command", "pay")
             .RequestData("vnp_TmnCode", _tmnCode)
-            .RequestData("vnp_Amount", Math.Round(transaction.Amount * VnPayAmountMultiplier * PointMultiplier).ToString(CultureInfo.InvariantCulture))
+            .RequestData("vnp_Amount", Math.Round(amount).ToString(CultureInfo.InvariantCulture))
             .RequestData("vnp_CreateDate", DateTime.Now.ToString("yyyyMMddHHmmss"))
             .RequestData("vnp_CurrCode", "VND")
             .RequestData("vnp_IpAddr", clientIpAddress)
@@ -53,9 +55,7 @@ public class VnPayService : IPaymentService
         var pos = queryString.IndexOf("&vnp_SecureHash", StringComparison.Ordinal);
         var checkSignature = ValidateSignature(queryString.Substring(1, pos - 1), vnpSecureHash, _hashSecret);
         if (!vnpResponseCode.Equals("00") || !checkSignature)
-        {
             throw new ArgumentException(GetErrorMessage(vnpResponseCode));
-        }
 
         return Task.CompletedTask;
     }

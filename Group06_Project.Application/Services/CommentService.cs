@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Interfaces;
 using Group06_Project.Domain.Interfaces.Services;
@@ -7,7 +8,7 @@ namespace Group06_Project.Application.Services;
 
 public class CommentService : ICommentService
 {
-    private const int CommentPageSize = 5;
+    private const int CommentPageSize = 10;
     private readonly IUnitOfWork _unitOfWork;
 
     public CommentService(IUnitOfWork unitOfWork)
@@ -15,7 +16,7 @@ public class CommentService : ICommentService
         _unitOfWork = unitOfWork;
     }
 
-    public void AddCommentToFilm(int filmId, string commentText, string userId)
+    public async Task AddCommentToFilm(int filmId, string commentText, string userId)
     {
         if (!_unitOfWork.Films.ExistsById(filmId)) throw new Exception("Film not found");
         var comment = new Comment
@@ -25,7 +26,7 @@ public class CommentService : ICommentService
             UserId = userId
         };
         _unitOfWork.Comments.Add(comment);
-        _unitOfWork.Commit();
+        await _unitOfWork.CommitAsync();
     }
 
     public void RemoveComment(int commentId)
@@ -34,7 +35,7 @@ public class CommentService : ICommentService
         _unitOfWork.Commit();
     }
 
-    public Page<CommentItem> GetCommentsByFilmId(int filmId, int commentPageNo)
+    public async Task<Page<CommentItem>> GetCommentsByFilmId(int filmId, int commentPageNo)
     {
         var pageRequest = new PageRequest<Comment>
         {
@@ -42,55 +43,20 @@ public class CommentService : ICommentService
             Size = CommentPageSize,
             Sort = "Time Desc"
         };
-        return _unitOfWork.Comments.GetByFilmId(filmId, pageRequest);
+        return await _unitOfWork.Comments.GetByFilmId(filmId, pageRequest);
     }
 
-    public void UpdateComment(int commentId, string newContent)
-    {
-        _unitOfWork.Comments.UpdateComment(commentId, newContent);
-        _unitOfWork.Commit();
-    }
-
-    public Page<CommentList> GetAllComments(int commentPageNo)
+    public Page<CommentList> GetAllComments(int? page, string? sort, string? userId, int? filmId)
     {
         var pageRequest = new PageRequest<Comment>
         {
-            PageNumber = commentPageNo,
+            PageNumber = page ?? 1,
             Size = CommentPageSize,
-            Sort = "Time Desc"
+            Sort = sort
         };
-        return _unitOfWork.Comments.GetAllComments(pageRequest);
+        Expression<Func<Comment, bool>> predicate = c =>
+            (string.IsNullOrEmpty(userId) || c.UserId == userId)
+            && (!filmId.HasValue || c.FilmId == filmId);
+        return _unitOfWork.Comments.GetAllBy(pageRequest, predicate);
     }
-	public Page<CommentList> GetAllCommentsByAsc(int commentPageNo)
-	{
-		var pageRequest = new PageRequest<Comment>
-		{
-			PageNumber = commentPageNo,
-			Size = CommentPageSize,
-			Sort = "Time Asc"
-		};
-		return _unitOfWork.Comments.GetAllCommentsByAsc(pageRequest);
-	}
-	public Page<CommentList> SearchComments(string searchTerm, int commentPageNo)
-	{
-		var pageRequest = new PageRequest<Comment>
-		{
-			PageNumber = commentPageNo,
-			Size = CommentPageSize,
-			Sort = "Time Desc"
-		};
-
-		return _unitOfWork.Comments.SearchComments(searchTerm, pageRequest);
-	}
-	public Page<CommentList> SearchCommentsByAsc(string searchTerm, int commentPageNo)
-	{
-		var pageRequest = new PageRequest<Comment>
-		{
-			PageNumber = commentPageNo,
-			Size = CommentPageSize,
-			Sort = "Time Asc"
-		};
-
-		return _unitOfWork.Comments.SearchComments(searchTerm, pageRequest);
-	}
 }

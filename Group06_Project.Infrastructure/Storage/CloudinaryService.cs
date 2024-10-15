@@ -30,33 +30,40 @@ public class CloudinaryService : IStorageService
         return Task.CompletedTask;
     }
 
-    public Task<string> UploadImage(IFormFile file)
+    public async Task<string> UploadImage(IFormFile file)
     {
         var uploadParams = new ImageUploadParams
         {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
             UseFilename = false,
-            Overwrite = false
+            Overwrite = false,
+            PublicId = Guid.NewGuid().ToString()
         };
-        _cloudinary.UploadAsync(uploadParams);
-        return Task.FromResult(uploadParams.PublicId);
+        await _cloudinary.UploadAsync(uploadParams);
+        return await Task.FromResult(uploadParams.PublicId);
     }
 
-    public Task<string> UploadVideo(IFormFile file)
+    public async Task<string> UploadVideo(IFormFile file)
     {
         var uploadParams = new VideoUploadParams
         {
             File = new FileDescription(file.FileName, file.OpenReadStream()),
             UseFilename = false,
-            Overwrite = false
+            Overwrite = false,
+            PublicId = Guid.NewGuid().ToString()
         };
-        _cloudinary.UploadAsync(uploadParams);
-        return Task.FromResult(uploadParams.PublicId);
+        var result = await _cloudinary.UploadLargeAsync(uploadParams);
+        return result.PublicId;
     }
 
-    public Task<string> GetFileUrl(string fileId)
+    public Task<string> GetImageUrl(string fileId)
     {
         var url = _cloudinary.Api.UrlImgUp.BuildUrl(fileId);
+        return Task.FromResult(url);
+    }
+    public Task<string> GetVideoUrl(string? fileId)
+    {
+        var url = _cloudinary.Api.UrlVideoUp.BuildUrl(fileId);
         return Task.FromResult(url);
     }
 }

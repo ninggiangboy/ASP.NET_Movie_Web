@@ -6,6 +6,8 @@ public interface IStorageService
 {
     Task<string> UploadImage(IFormFile file);
     Task<string> UploadVideo(IFormFile file);
-    Task<string> GetFileUrl(string fileId);
+    Task<string> GetImageUrl(string fileId);
+    Task<string> GetVideoUrl(string fileId);
+    
     Task DeleteFile(string fileId);
 }

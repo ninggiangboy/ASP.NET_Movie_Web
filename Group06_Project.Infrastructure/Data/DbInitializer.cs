@@ -1,7 +1,9 @@
+using Bogus;
 using Group06_Project.Domain.Entities;
 using Group06_Project.Domain.Enums;
 using Group06_Project.Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using NuGet.Packaging;
 
 namespace Group06_Project.Infrastructure.Data;
 
@@ -32,7 +34,31 @@ public class DbInitializer : IDbInitializer
     private async Task InitializeFilms()
     {
         if (_unitOfWork.Films.Count() > 0) return;
-        var films = new List<Film>();
+        var faker = new Faker<Film>("en")
+            .RuleFor(f => f.Title, f => f.Lorem.Sentence())
+            .RuleFor(f => f.OtherTitle, f => f.Lorem.Sentence())
+            .RuleFor(f => f.Description, f => f.Lorem.Paragraph())
+            .RuleFor(f => f.TrailerUrl, f => "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            .RuleFor(f => f.PosterUrl, f => f.Image.PicsumUrl())
+            .RuleFor(f => f.ThumbnailUrl, f => f.Image.PicsumUrl())
+            .RuleFor(f => f.Duration, f => f.Random.Number(60, 180))
+            .RuleFor(f => f.AverageRating, f => f.Random.Decimal(1, 5))
+            .RuleFor(f => f.VideoUrl, f => "https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-1080p.mp4")
+            .RuleFor(f => f.Actor, f => f.Person.FullName)
+            .RuleFor(f => f.Director, f => f.Person.FullName)
+            .RuleFor(f => f.TotalView, f => f.Random.Number(100, 1000))
+            .RuleFor(f => f.ReleaseYear, f => f.Random.Number(2000, 2023))
+            .RuleFor(f => f.CountryId, f => f.Random.Number(1, 5))
+            .RuleFor(f => f.IsVisible, f => f.Random.Bool());
+        var films = faker.Generate(1000);
+        var genres = _unitOfWork.Genres.GetAll().ToList();
+        foreach (var film in films)
+        {
+            var genreCount = Random.Shared.Next(0, genres.Count - 1);
+            var selectedGenres = genres.GetRange(0, genreCount);
+            film.Genres.AddRange(selectedGenres);
+        }
+
         _unitOfWork.Films.AddAll(films);
         await _unitOfWork.CommitAsync();
     }

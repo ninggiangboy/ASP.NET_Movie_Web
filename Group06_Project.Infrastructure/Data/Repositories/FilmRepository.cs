@@ -34,7 +34,8 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
             PageNumber = pageRequest.PageNumber,
             PageSize = pageRequest.Size,
             TotalElement = totalElement,
-            Data = totalElement == 0 ? new List<FilmItemList>() : data.ToList()
+            Data = totalElement == 0 ? new List<FilmItemList>() : data.ToList(),
+            Sort = pageRequest.Sort
         };
     }
 
@@ -45,27 +46,9 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
 
     public ICollection<FilmItemList> GetFavoriteFilms(string userId)
     {
-        // return DbContext.Users
-        //     .Include(u => u.FavoriteFilms)
-        //     .ThenInclude(f => f.Genres)
-        //     .FirstOrDefault(u => u.Id == userId)?.FavoriteFilms
-        //     .Select(f => new FilmItemList
-        //     {
-        //         Id = f.Id,
-        //         Title = f.Title,
-        //         PosterUrl = f.PosterUrl ?? "",
-        //         AverageRating = f.AverageRating ?? 0,
-        //         TotalView = f.TotalView,
-        //         Genres = f.Genres.Select(g => new SelectOption
-        //         {
-        //             Value = g.Id,
-        //             Label = g.Name
-        //         })
-        //     }).ToList() ?? new List<FilmItemList>();
-        // rewrite
         return DbSet
             .Include(f => f.Genres)
-            .Where(f => f.Followers.Any(u => u.Id == userId))
+            .Where(f => f.Followers.Any(u => u.Id == userId) && f.IsVisible)
             .ProjectTo<FilmItemList>(_mapper)
             .ToList();
     }
@@ -85,47 +68,61 @@ public class FilmRepository : RepositoryBase<Film, int>, IFilmRepository
         return DbSet
             .Include(f => f.Genres)
             .Include(f => f.Country)
-            .Include(f => f.Episodes)
             .Where(f => f.Id == id)
             .ProjectTo<FilmItemDetail>(_mapper)
-            // .Select(f => new FilmItemDetail
-            // {
-            //     Title = f.Title,
-            //     OtherTitle = f.OtherTitle,
-            //     Description = f.Description,
-            //     TrailerUrl = f.TrailerUrl,
-            //     ThumbnailUrl = f.ThumbnailUrl,
-            //     Duration = f.Duration,
-            //     AverageRating = f.AverageRating,
-            //     TotalEpisode = f.TotalEpisode,
-            //     VideoUrl = f.VideoUrl,
-            //     DurationPerEpisode = f.DurationPerEpisode,
-            //     Type = f.Type,
-            //     Actor = f.Actor,
-            //     Director = f.Director,
-            //     TotalView = f.TotalView,
-            //     ReleaseYear = f.ReleaseYear,
-            //     Country = f.CountryId != null
-            //         ? new SelectOption
-            //         {
-            //             Value = f.CountryId ?? 0,
-            //             Label = f.Country!.Name ?? ""
-            //         }
-            //         : null,
-            //     Genres = f.Genres.Select(g => new SelectOption
-            //     {
-            //         Value = g.Id,
-            //         Label = g.Name
-            //     }),
-            //     Episodes = f.Episodes.OrderBy(e => e.Number).Select(e => new EpisodeItem
-            //     {
-            //         Id = e.Id,
-            //         Number = e.Number,
-            //         Title = e.Title,
-            //         Duration = e.Duration,
-            //         ThumbnailUrl = e.ThumbnailUrl,
-            //         VideoUrl = e.VideoUrl
-            //     }).ToList()})
             .FirstOrDefaultAsync();
+    }
+
+    public void DeleteFilm(Film film)
+    {
+        DbSet.Remove(film);
+    }
+
+    public Film? GetFilmByIdWithGenresAndCountry(int id)
+    {
+        return DbSet.Include(f => f.Genres)
+            .Include(f => f.Country)
+            .FirstOrDefault(f => f.Id == id);
+    }
+
+    public Task ToggleFavoriteFilm(string userId, int filmId)
+    {
+        var film = DbSet.Include(f => f.Followers).FirstOrDefault(f => f.Id == filmId);
+        var user = DbContext.Users.FirstOrDefault(u => u.Id == userId)!;
+        if (film!.Followers.Any(u => u.Id == userId))
+            film.Followers.Remove(user);
+        else
+            film.Followers.Add(user);
+        DbSet.Update(film);
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> IsFavoriteFilm(int existFilmId, string userId)
+    {
+        return DbSet.AnyAsync(f => f.Id == existFilmId && f.Followers.Any(u => u.Id == userId));
+    }
+
+    public void AddView(int filmId, int viewCount)
+    {
+        var film = DbSet.Find(filmId) ?? throw new Exception("Film not found");
+        film.TotalView += viewCount;
+        DbSet.Update(film);
+    }
+
+    public async Task<IEnumerable<FilmListExport>> GetAllFilmList()
+    {
+        return await DbSet
+            .Include(f => f.Genres)
+            .Include(f => f.Country)
+            .ProjectTo<FilmListExport>(_mapper)
+            .ToListAsync();
+    }
+
+    public Task ToggleVisibleFilm(int id)
+    {
+        var film = DbSet.Find(id) ?? throw new Exception("Film not found");
+        film.IsVisible = !film.IsVisible;
+        DbSet.Update(film);
+        return Task.CompletedTask;
     }
 }

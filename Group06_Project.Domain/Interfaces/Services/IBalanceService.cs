@@ -8,4 +8,5 @@ public interface IBalanceService
     Task<TransactionModel> CreateTransactionAsync(decimal amountPoint, TransactionType type, string userId);
 
     Task ConfirmTransactionAsync(string transactionReference);
+    Task PurchaseAsync(decimal amountPoint, string userId);
 }

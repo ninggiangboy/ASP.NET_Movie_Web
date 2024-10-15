@@ -2,6 +2,6 @@ namespace Group06_Project.Domain.Enums;
 
 public enum FilmType
 {
-    Movie,
-    Series
+    Movie = 0,
+    Series = 1
 }

@@ -8,4 +8,5 @@ public interface IGenreRepository : IRepositoryBase<Genre, int>
 {
     IEnumerable<SelectListItem> GetAllGenresHomeModel();
     public IEnumerable<HomeItem> GetAllGenreHomeItems();
+    public IEnumerable<Genre> GetGenreByIds(IEnumerable<int> ids);
 }

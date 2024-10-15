@@ -13,3 +13,9 @@
       - MSSQL_SA_PASSWORD=Password123
     ports:
       - 1433:1433
+  cache:
+    image: redis
+    container_name: redis_cache
+    restart: no
+    ports:
+      - 6379:6379

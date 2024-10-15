@@ -14,6 +14,7 @@ public static class IdentityExtensions
             {
                 options.SignIn.RequireConfirmedAccount = true;
                 options.User.RequireUniqueEmail = true;
+                options.Lockout.AllowedForNewUsers = true;
             })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -22,6 +23,10 @@ public static class IdentityExtensions
         {
             googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
             googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+        });
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
         });
     }
 }
